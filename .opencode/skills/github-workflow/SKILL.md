@@ -53,6 +53,11 @@ gh issue comment ISSUE_NUMBER --body "🔧 Branch erstellt: \`ISSUE_NUMBER-short
 
 ### 4. Implementierung durchführen
 - Code schreiben
+- **Tests schreiben** (ZWINGEND ERFORDERLICH!)
+  - Minimum: Unit-Tests für neue Funktionalität
+  - Bei Bedarf: Integration-Tests
+  - Bei Bedarf: E2E-Tests
+  - Ziel: Issue-Anforderungen testen, nicht 100% Coverage
 - Commits machen
 
 ### 5. Qualitätsprüfung durchführen

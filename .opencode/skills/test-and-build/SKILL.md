@@ -7,6 +7,31 @@ description: Testing, build processes, and CI/CD integration for all services
 
 Testing, Build und CI/CD für alle Services.
 
+## Test-First Prinzip
+
+**WICHTIG**: Bei jeder Issue-Implementierung MÜSSEN Tests geschrieben werden!
+
+### Test-Anforderungen
+- **Minimum**: Unit-Tests für neue Funktionalität
+- **Bei Bedarf**: Integration-Tests für API/DB-Interaktion
+- **Bei Bedarf**: E2E-Tests für kritische User-Flows
+- **Ziel**: Issue-Anforderungen testen, nicht 100% Coverage
+
+### Test-Strategie
+1. **Unit-Tests**: Isolierte Funktions-/Methoden-Tests
+2. **Integration-Tests**: Service-übergreifende Tests
+3. **E2E-Tests**: User-Journey Tests
+
+### Beispiel-Test-Planung
+```
+Issue: "Add recipe search endpoint"
+Tests:
+- Unit: search_recipes() mit verschiedenen Queries
+- Unit: Filter-Logik (ingredients, categories)
+- Integration: /api/recipes/search HTTP endpoint
+- E2E: User sucht Rezept, sieht Ergebnisse
+```
+
 ## Quality Gates
 
 ### Vor Commit
@@ -38,6 +63,50 @@ npm test -- path/to/test.spec.ts  # Einzelne Datei
 npx jest --verbose
 npx jest --coverage
 npx jest --onlyFailures          # Nur failed
+```
+
+## Python Workflows
+
+### Dependencies
+```bash
+pip install -r requirements.txt              # Standard
+pip install -r requirements-dev.txt          # Dev dependencies
+python -m venv venv && source venv/bin/activate  # Virtual env
+```
+
+### Testing
+```bash
+pytest                           # Alle Tests
+pytest -v                        # Verbose
+pytest --cov=src                 # Mit Coverage
+pytest --cov-report=html         # HTML Coverage Report
+pytest tests/test_file.py        # Einzelne Datei
+pytest -k "test_name"            # Bestimmter Test
+pytest --lf                      # Last failed
+pytest --maxfail=1               # Stop nach erstem Fehler
+```
+
+### Linting & Formatting
+```bash
+# Black (Formatter)
+black .                          # Format all
+black --check .                  # Check only
+black src/ tests/               # Specific dirs
+
+# Ruff (Linter)
+ruff check .                    # Lint all
+ruff check --fix .              # Auto-fix
+ruff check src/ tests/          # Specific dirs
+
+# Combined
+black . && ruff check . && pytest
+```
+
+### Type-Checking
+```bash
+mypy .                          # Type check all
+mypy src/                       # Specific dir
+mypy --strict .                 # Strict mode
 ```
 
 ### Linting & Formatting
