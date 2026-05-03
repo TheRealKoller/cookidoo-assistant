@@ -1,0 +1,67 @@
+name: E2E Tests
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'cookidoo-mcp/**'
+      - 'cookidoo-assistant-api/**'
+      - 'cookidoo-assistant-mcp/**'
+      - '.github/workflows/e2e.yml'
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd cookidoo-mcp && pip install -r requirements.txt
+
+      - name: Create test env
+        run: |
+          cp cookidoo-mcp/.env.example cookidoo-mcp/.env
+          echo "COOKIDOO_EMAIL=test@example.com" >> cookidoo-mcp/.env
+          echo "COOKIDOO_PASSWORD=testpass" >> cookidoo-mcp/.env
+
+      - name: Start services
+        run: |
+          cd cookidoo-mcp
+          docker-compose up -d
+          docker-compose ps
+
+      - name: Wait for services
+        run: |
+          timeout 60 sh -c 'until curl -f http://localhost:3000/health 2>/dev/null; do sleep 2; done'
+
+      - name: Run E2E tests
+        run: npm run test:e2e --if-present
+        env:
+          MCP_SERVER_URL: http://localhost:3000
+
+      - name: Get logs on failure
+        if: failure()
+        run: |
+          cd cookidoo-mcp
+          docker-compose logs
+
+      - name: Cleanup
+        if: always()
+        run: |
+          cd cookidoo-mcp
+          docker-compose down -v

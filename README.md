@@ -1,5 +1,9 @@
 # Cookidoo Assistant - Monorepo
 
+[![CI](https://github.com/TheRealKoller/cookidoo-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/TheRealKoller/cookidoo-assistant/actions/workflows/ci.yml)
+[![Release](https://github.com/TheRealKoller/cookidoo-assistant/actions/workflows/release.yml/badge.svg)](https://github.com/TheRealKoller/cookidoo-assistant/actions/workflows/release.yml)
+[![codecov](https://codecov.io/gh/TheRealKoller/cookidoo-assistant/branch/main/graph/badge.svg)](https://codecov.io/gh/TheRealKoller/cookidoo-assistant)
+
 > **Note:** This repository consolidates all Cookidoo Assistant services. The previous `cookidoo-mcp` repository has been archived and merged here.
 
 AI-powered meal planning assistant using Cookidoo recipes with MCP servers and REST API.
