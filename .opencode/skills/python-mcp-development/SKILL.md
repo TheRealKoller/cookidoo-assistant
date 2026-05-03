@@ -1,3 +1,8 @@
+---
+name: python-mcp-development
+description: Python MCP development workflows and best practices for the cookidoo-mcp service
+---
+
 # Python MCP Development Skill
 
 This skill provides workflows and best practices for developing the cookidoo-mcp Python service.

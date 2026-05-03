@@ -1,3 +1,8 @@
+---
+name: test-and-build
+description: Testing, build processes, and CI/CD integration for all services
+---
+
 # Testing & Build Skill
 
 ## Beschreibung

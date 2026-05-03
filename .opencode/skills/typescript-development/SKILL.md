@@ -1,3 +1,8 @@
+---
+name: typescript-development
+description: TypeScript development workflows and best practices for monorepo services (shared, assistant-mcp, api)
+---
+
 # TypeScript Development Skill
 
 This skill provides workflows and best practices for developing the TypeScript services (shared, assistant-mcp, api).

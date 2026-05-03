@@ -1,3 +1,8 @@
+---
+name: github-workflow
+description: GitHub Issues, Project Boards, and Pull Request management for the Cookidoo Assistant monorepo
+---
+
 # GitHub Workflow Skill
 
 ## Beschreibung

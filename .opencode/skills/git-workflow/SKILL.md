@@ -1,3 +1,8 @@
+---
+name: git-workflow
+description: Local Git operations including branch management, commits, and synchronization
+---
+
 # Git Workflow Skill
 
 ## Beschreibung
