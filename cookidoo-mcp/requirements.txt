@@ -1,5 +1,5 @@
 # Core dependencies
-cookidoo-api==0.17.0
+cookidoo-api
 fastapi
 uvicorn
 python-dotenv
@@ -7,3 +7,9 @@ requests
 
 # MCP SDK
 mcp
+
+# Testing (dev)
+pytest
+pytest-asyncio
+pytest-cov
+httpx

@@ -5,16 +5,22 @@ import os
 class CookidooConnection:
     def __init__(self):
         self._client = None
-        self._email = os.getenv("COOKIDOO_EMAIL")
-        self._password = os.getenv("COOKIDOO_PASSWORD")
-        
-        if not self._email or not self._password:
-            raise ValueError("COOKIDOO_EMAIL and COOKIDOO_PASSWORD must be set")
+        self._email = None
+        self._password = None
+    
+    def _init_credentials(self):
+        if not self._email:
+            self._email = os.getenv("COOKIDOO_EMAIL")
+            self._password = os.getenv("COOKIDOO_PASSWORD")
+            
+            if not self._email or not self._password:
+                raise ValueError("COOKIDOO_EMAIL and COOKIDOO_PASSWORD must be set")
     
     async def connect(self):
         if self._client:
             return self._client
         
+        self._init_credentials()
         logger.info(f"Connecting to Cookidoo API with user {self._email}")
         self._client = Cookidoo()
         await self._client.login(self._email, self._password)
