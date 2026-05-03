@@ -1,5 +1,7 @@
 # Cookidoo Assistant - Monorepo
 
+> **Note:** This repository consolidates all Cookidoo Assistant services. The previous `cookidoo-mcp` repository has been archived and merged here.
+
 AI-powered meal planning assistant using Cookidoo recipes with MCP servers and REST API.
 
 ## 🎯 Project Goal
@@ -13,7 +15,7 @@ Create an intelligent meal planning system that generates weekly meal plans base
 
 ## 🏗️ Architecture
 
-This is a monorepo containing multiple services:
+This is a **monorepo** containing all services in a single repository:
 
 ```
 cookidoo-assistant/
@@ -103,6 +105,7 @@ npm run format
 
 ## 📚 Documentation
 
+- **Repository**: https://github.com/TheRealKoller/cookidoo-assistant
 - **Project Board**: https://github.com/users/TheRealKoller/projects/5
 - **Instructions**: [.opencode/instructions.md](.opencode/instructions.md)
 - **Skills**: [.opencode/skills/](.opencode/skills/)
@@ -110,7 +113,7 @@ npm run format
 
 ## 🛠️ Technology Stack
 
-**Status**: 🚧 To be decided in [Issue #2](https://github.com/TheRealKoller/cookidoo-mcp/issues/2)
+**Status**: 🚧 To be decided in [Issue #21](https://github.com/TheRealKoller/cookidoo-assistant/issues/21)
 
 Options:
 - **TypeScript/Node.js** - Standard for MCP servers
@@ -127,9 +130,11 @@ Options:
 
 ## 🗺️ Roadmap
 
+**Note:** Issue numbers updated after monorepo migration (old cookidoo-mcp#1-11 → #20-30)
+
 ### Phase 1: Foundation
-- [ ] #1 - Initialize Monorepo Structure ✅ IN PROGRESS
-- [ ] #2 - Evaluate Cookidoo API Libraries
+- [x] #20 - Initialize Monorepo Structure ✅ COMPLETED
+- [ ] #21 - Evaluate Cookidoo API Libraries
 - [ ] Setup Docker infrastructure
 - [ ] Database schema design
 
@@ -183,7 +188,15 @@ MIT
 
 ## 🔗 Links
 
+- **GitHub Repository**: https://github.com/TheRealKoller/cookidoo-assistant
 - **GitHub Project Board**: https://github.com/users/TheRealKoller/projects/5
-- **cookidoo-mcp Repository**: https://github.com/TheRealKoller/cookidoo-mcp
-- **cookidoo-assistant Repository**: https://github.com/TheRealKoller/cookidoo-assistant
+- **Archived cookidoo-mcp Repository**: https://github.com/TheRealKoller/cookidoo-mcp (archived, moved to monorepo)
 - **Cookidoo**: https://cookidoo.de
+
+## 📝 Project History
+
+This repository consolidates the following projects:
+- `cookidoo-mcp` (Issues #1-11 → transferred as #20-30)
+- `cookidoo-assistant` (Issues #1-19 → unchanged)
+
+All development now happens in this single monorepo.

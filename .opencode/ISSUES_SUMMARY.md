@@ -1,295 +1,316 @@
-# Created GitHub Issues - Summary
+# Issues Summary - Cookidoo Assistant Monorepo
 
-## Overview
-Total Issues Created: **29 issues** across 2 repositories
+**Repository**: https://github.com/TheRealKoller/cookidoo-assistant  
+**Project Board**: https://github.com/users/TheRealKoller/projects/5
 
----
+## Issue Nummerierung nach Monorepo Migration
 
-## cookidoo-mcp Repository (11 Issues)
+Dieses Monorepo konsolidiert Issues aus zwei ehemaligen Repositories:
 
-### Setup & Infrastructure (3 issues)
-1. **#1 - Setup: Initialize Monorepo Structure** ⭐ HIGH PRIORITY
-   - Initialize monorepo with workspaces
-   - Create directory structure
-   - Setup basic configuration
-
-2. **#2 - Setup: Evaluate Cookidoo API Libraries** ⭐ HIGH PRIORITY
-   - Evaluate miaucl/cookidoo-api (Python)
-   - Evaluate tobim-dev/cookidoo-scraper (TypeScript)
-   - Document comparison and recommendation
-
-3. **#3 - Setup: Docker Configuration for cookidoo-mcp** ⭐ HIGH PRIORITY
-   - Create Dockerfile
-   - Setup docker-compose
-   - Configure port 3000
-   - Dependencies: #2
-
-### Core Features (6 issues)
-4. **#4 - Feature: Implement MCP Server Core** ⭐ HIGH PRIORITY
-   - Setup MCP server framework
-   - Implement authentication
-   - Connect to Cookidoo API
-   - Dependencies: #2, #3
-
-5. **#5 - Feature: Implement search_recipes MCP Tool** ⭐ HIGH PRIORITY
-   - Universal search (freetext + ingredients)
-   - Dietary filters
-   - Pagination
-   - Dependencies: #4
-
-6. **#6 - Feature: Implement get_recipe_details MCP Tool** ⭐ HIGH PRIORITY
-   - Get full recipe information
-   - Parse all recipe fields
-   - Dependencies: #4
-
-7. **#7 - Feature: Implement get_recipe_nutrition MCP Tool** ⭐ HIGH PRIORITY
-   - Get nutritional information
-   - Handle missing data
-   - Dependencies: #4, #2
-
-8. **#8 - Feature: Implement search_ingredients MCP Tool** 🔵 MEDIUM PRIORITY
-   - Search and filter ingredients
-   - Fuzzy matching
-   - Dependencies: #4, #2
-
-9. **#9 - Feature: Implement add_recipe_to_weekplan MCP Tool** ⭐ HIGH PRIORITY
-   - Add recipes to Cookidoo week plan
-   - Handle conflicts
-   - Dependencies: #4, #2
-
-### Testing & Documentation (2 issues)
-10. **#10 - Testing: Setup Unit Test Infrastructure** ⭐ HIGH PRIORITY
-    - Setup test framework
-    - Configure coverage
-    - Setup mocking
-
-11. **#11 - Documentation: Create Comprehensive README and API Documentation** 🔵 MEDIUM PRIORITY
-    - README with setup guide
-    - MCP tools documentation
-    - Usage examples
+**Original cookidoo-assistant Issues**: #1-19 (unverändert)  
+**Transferierte cookidoo-mcp Issues**: cookidoo-mcp#1-11 → #20-30
 
 ---
 
-## cookidoo-assistant Repository (18 Issues)
+## Issues by Service
 
-### Setup & Infrastructure (2 issues)
-1. **#1 - Setup: Docker Configuration for cookidoo-assistant Services** ⭐ HIGH PRIORITY
-   - Configure all services (shared, mcp, api)
-   - Setup PostgreSQL databases
-   - Create docker-compose.yml
+### 🔧 Setup & Infrastructure (Priority: High)
 
-2. **#2 - Setup: GitHub Actions CI/CD Pipeline** 🔵 MEDIUM PRIORITY
-   - CI workflow (tests, builds)
-   - Release workflow
-   - E2E test workflow
+#### service:cookidoo-mcp
+- **#20** - Setup: Initialize Monorepo Structure ✅ COMPLETED
+  - Dependencies: None
+  - Status: Done
 
-### Shared Library (4 issues)
-3. **#3 - Feature: Setup cookidoo-assistant-shared Library** ⭐ HIGH PRIORITY - BLOCKING
-   - Initialize shared package
-   - Setup database connection
-   - Create base utilities
+- **#21** - Setup: Evaluate Cookidoo API Libraries
+  - Dependencies: None
+  - Status: Todo
+  - **BLOCKS**: #19, #22, #23-28
+  - Description: Evaluate miaucl/cookidoo-api (Python) vs tobim-dev/cookidoo-scraper (TypeScript)
 
-4. **#4 - Feature: Implement Database Schema and Migrations** ⭐ HIGH PRIORITY - BLOCKING
-   - Design complete schema (8 tables)
-   - Create migration system
-   - Add indexes and constraints
+- **#22** - Setup: Docker Configuration for cookidoo-mcp
+  - Dependencies: #21 (tech stack decision)
+  - Status: Todo
 
-5. **#5 - Feature: Implement Data Access Layer (Repositories)** ⭐ HIGH PRIORITY
-   - Implement 8 repositories
-   - CRUD operations
-   - Dependencies: #4
+#### service:shared + service:assistant-mcp + service:api
+- **#1** - Setup: Docker Configuration for cookidoo-assistant Services
+  - Dependencies: #3, #21 (tech stack)
+  - Status: Todo
+  - Description: Docker setup for shared, assistant-mcp, and api services
 
-6. **#6 - Feature: Implement Business Logic Services** ⭐ HIGH PRIORITY
-   - UserService
-   - HealthCalculatorService
-   - RecipePreferenceService
-   - WeekPlanService
-   - Dependencies: #5
+- **#2** - Setup: GitHub Actions CI/CD Pipeline
+  - Dependencies: #1, #21
+  - Status: Todo
+  - Description: CI/CD for all services (build, test, deploy)
 
-### MCP Server (7 issues)
-7. **#7 - Feature: Implement MCP Server Core for cookidoo-assistant-mcp** ⭐ HIGH PRIORITY
-   - Setup MCP server
-   - Connect to database
-   - Integrate shared library
-   - Dependencies: #1, #3
-
-8. **#8 - Feature: Implement User Profile MCP Tools (CRUD)** ⭐ HIGH PRIORITY
-   - 4 CRUD tools for user profiles
-   - Dependencies: #7, #5
-
-9. **#9 - Feature: Implement Dietary Preferences MCP Tools (CRUD)** ⭐ HIGH PRIORITY
-   - 4 CRUD tools for dietary preferences
-   - Dependencies: #7, #5
-
-10. **#10 - Feature: Implement Allergies MCP Tools (CRUD)** ⭐ HIGH PRIORITY
-    - 4 CRUD tools for allergies
-    - Dependencies: #7, #5
-
-11. **#11 - Feature: Implement Health Data MCP Tools (CRUD)** ⭐ HIGH PRIORITY
-    - 5 CRUD tools for health data
-    - Includes auto-calculation
-    - Dependencies: #7, #6
-
-12. **#12 - Feature: Implement Recipe Ratings MCP Tools (CRUD)** ⭐ HIGH PRIORITY
-    - 6 CRUD tools for recipe ratings
-    - Automatic tracking
-    - Dependencies: #7, #6
-
-13. **#13 - Feature: Implement Week Plan MCP Tools (CRUD)** ⭐ HIGH PRIORITY
-    - 8 CRUD tools for week plans
-    - Automatic dislike tracking
-    - Dependencies: #7, #6, #12
-
-### REST API (2 issues)
-14. **#14 - Feature: Implement REST API Server for cookidoo-assistant-api** 🔵 MEDIUM PRIORITY
-    - Setup REST API framework
-    - Port 3002
-    - OpenAPI documentation
-    - Dependencies: #1, #3
-
-15. **#15 - Feature: Implement REST API Endpoints - All CRUD Operations** 🔵 MEDIUM PRIORITY
-    - Implement all REST endpoints
-    - Request/response validation
-    - Dependencies: #14, #5, #6
-
-### Testing (2 issues)
-16. **#16 - Testing: Setup Unit and Integration Test Infrastructure** ⭐ HIGH PRIORITY
-    - Setup test framework
-    - Configure test database
-    - Coverage reporting
-
-17. **#17 - Testing: Setup E2E Test Infrastructure** 🔵 MEDIUM PRIORITY
-    - E2E test scenarios
-    - Docker test environment
-    - Dependencies: #16
-
-### Documentation (1 issue)
-18. **#18 - Documentation: Create Comprehensive Documentation for All Services** 🔵 MEDIUM PRIORITY
-    - README for all services
-    - Architecture diagrams
-    - API documentation
+#### service:shared
+- **#3** - Feature: Setup cookidoo-assistant-shared Library
+  - Dependencies: #21 (tech stack decision)
+  - Status: Todo
+  - **BLOCKS**: #4, #5, #6, #7-13, #14-15
+  - Description: Initialize shared library structure
 
 ---
 
-## Next Steps
+### 📚 Shared Library (service:shared)
 
-### 1. Add Issues to Project Board
-You need to refresh GitHub CLI authentication with project scope:
-```bash
-gh auth refresh -s project
+- **#4** - Feature: Implement Database Schema and Migrations
+  - Dependencies: #3
+  - Status: Todo
+  - **BLOCKS**: #5, #6
+  - Description: PostgreSQL schema for users, preferences, allergies, health_data, recipe_ratings, week_plans
+
+- **#5** - Feature: Implement Data Access Layer (Repositories)
+  - Dependencies: #3, #4
+  - Status: Todo
+  - **BLOCKS**: #6
+  - Description: Repository pattern for all entities
+
+- **#6** - Feature: Implement Business Logic Services
+  - Dependencies: #3, #4, #5
+  - Status: Todo
+  - **BLOCKS**: #7-13
+  - Description: Service layer for business logic
+
+---
+
+### 🤖 MCP Server - Cookidoo API (service:cookidoo-mcp)
+
+- **#23** - Feature: Implement MCP Server Core
+  - Dependencies: #21 (tech stack)
+  - Status: Todo
+  - **BLOCKS**: #24-28
+  - Description: MCP server initialization, authentication, error handling
+
+- **#24** - Feature: Implement search_recipes MCP Tool
+  - Dependencies: #23
+  - Status: Todo
+  - Description: Search recipes by text, ingredients, filters (country, category, difficulty)
+
+- **#25** - Feature: Implement get_recipe_nutrition MCP Tool
+  - Dependencies: #23
+  - Status: Todo
+  - Description: Get detailed nutrition info for a recipe
+
+- **#26** - Feature: Implement get_recipe_details MCP Tool
+  - Dependencies: #23
+  - Status: Todo
+  - Description: Get full recipe details (ingredients, steps, images, etc.)
+
+- **#27** - Feature: Implement search_ingredients MCP Tool
+  - Dependencies: #23
+  - Status: Todo
+  - Description: Search available ingredients
+
+- **#28** - Feature: Implement add_recipe_to_weekplan MCP Tool
+  - Dependencies: #23
+  - Status: Todo
+  - Description: Add recipe to Cookidoo weekplan
+
+---
+
+### 🤖 MCP Server - User Data (service:assistant-mcp)
+
+- **#7** - Feature: Implement MCP Server Core for cookidoo-assistant-mcp
+  - Dependencies: #3, #6
+  - Status: Todo
+  - **BLOCKS**: #8-13
+  - Description: MCP server for user data management
+
+- **#8** - Feature: Implement User Profile MCP Tools (CRUD)
+  - Dependencies: #7
+  - Status: Todo
+  - Description: create_user, get_user, update_user, delete_user
+
+- **#9** - Feature: Implement Dietary Preferences MCP Tools (CRUD)
+  - Dependencies: #7
+  - Status: Todo
+  - Description: CRUD operations for dietary preferences (omnivore, vegetarian, vegan, etc.)
+
+- **#10** - Feature: Implement Allergies MCP Tools (CRUD)
+  - Dependencies: #7
+  - Status: Todo
+  - Description: CRUD operations for user allergies and intolerances
+
+- **#11** - Feature: Implement Health Data MCP Tools (CRUD)
+  - Dependencies: #7
+  - Status: Todo
+  - Description: CRUD for health data (weight, height, age, activity level, goals)
+  - Note: Includes Harris-Benedict formula for BMR/TDEE calculation
+
+- **#12** - Feature: Implement Recipe Ratings MCP Tools (CRUD)
+  - Dependencies: #7
+  - Status: Todo
+  - Description: CRUD for recipe ratings (liked/disliked)
+  - Note: Automatic tracking + manual feedback
+
+- **#13** - Feature: Implement Week Plan MCP Tools (CRUD)
+  - Dependencies: #7
+  - Status: Todo
+  - Description: CRUD for week plans (7 days, 1 meal initially)
+  - Note: Recipes fetched from Cookidoo via cookidoo-mcp
+
+---
+
+### 🌐 REST API (service:api) - Lower Priority
+
+- **#14** - Feature: Implement REST API Server for cookidoo-assistant-api
+  - Dependencies: #3, #6
+  - Status: Todo
+  - **BLOCKS**: #15
+  - Description: Express/FastAPI server with authentication, middleware, error handling
+
+- **#15** - Feature: Implement REST API Endpoints - All CRUD Operations
+  - Dependencies: #14
+  - Status: Todo
+  - Description: REST endpoints mirroring MCP tools functionality
+
+---
+
+### 🧪 Testing
+
+- **#29** - Testing: Setup Unit Test Infrastructure (service:cookidoo-mcp)
+  - Dependencies: #23
+  - Status: Todo
+  - Description: Jest/pytest setup, test utilities, mocking
+
+- **#16** - Testing: Setup Unit and Integration Test Infrastructure
+  - Dependencies: #3, #6, #7
+  - Status: Todo
+  - Services: shared, assistant-mcp, api
+  - Description: Comprehensive test setup for all non-cookidoo-mcp services
+
+- **#17** - Testing: Setup E2E Test Infrastructure
+  - Dependencies: #7, #14
+  - Status: Todo
+  - Services: assistant-mcp, api
+  - Description: End-to-end testing across services
+
+---
+
+### 📖 Documentation
+
+- **#30** - Documentation: Create Comprehensive README and API Documentation (service:cookidoo-mcp)
+  - Dependencies: #24-28
+  - Status: Todo
+  - Description: README, MCP tools reference, examples
+
+- **#18** - Documentation: Create Comprehensive Documentation for All Services
+  - Dependencies: #8-13, #15
+  - Status: Todo
+  - Services: shared, assistant-mcp, api
+  - Description: API docs, architecture diagrams, deployment guides
+
+---
+
+### 🎯 Meta
+
+- **#19** - Meta: Create Tech-Stack-Specific Instructions and Skills
+  - Dependencies: #21 (tech stack decision)
+  - Status: Todo
+  - Services: ALL
+  - **CRITICAL**: Must be done immediately after #21
+  - Description: Update .opencode/ with tech-stack-specific workflows
+
+---
+
+## Dependency Graph
+
+```
+#21 (Evaluate Tech Stack) - BLOCKS EVERYTHING
+├── #19 (Tech-Stack Instructions) - CRITICAL
+├── #22 (Docker cookidoo-mcp)
+├── #23 (MCP Core cookidoo-mcp)
+│   ├── #24 (search_recipes)
+│   ├── #25 (get_recipe_nutrition)
+│   ├── #26 (get_recipe_details)
+│   ├── #27 (search_ingredients)
+│   ├── #28 (add_recipe_to_weekplan)
+│   └── #29 (Testing cookidoo-mcp)
+│       └── #30 (Docs cookidoo-mcp)
+└── #3 (Setup Shared Library)
+    ├── #4 (Database Schema)
+    │   └── #5 (Data Access Layer)
+    │       └── #6 (Business Logic)
+    │           ├── #1 (Docker assistant services)
+    │           │   └── #2 (CI/CD)
+    │           ├── #7 (MCP Core assistant-mcp)
+    │           │   ├── #8 (User Profile)
+    │           │   ├── #9 (Dietary Preferences)
+    │           │   ├── #10 (Allergies)
+    │           │   ├── #11 (Health Data)
+    │           │   ├── #12 (Recipe Ratings)
+    │           │   └── #13 (Week Plan)
+    │           └── #14 (REST API Server)
+    │               └── #15 (REST API Endpoints)
+    └── #16 (Testing shared/assistant-mcp/api)
+        └── #17 (E2E Testing)
+            └── #18 (Docs shared/assistant-mcp/api)
 ```
 
-Then add all issues to the project board:
-```bash
-# Add cookidoo-mcp issues
-for i in {1..11}; do
-  gh project item-add 5 --owner TheRealKoller --url "https://github.com/TheRealKoller/cookidoo-mcp/issues/$i"
-done
+---
 
-# Add cookidoo-assistant issues
-for i in {1..18}; do
-  gh project item-add 5 --owner TheRealKoller --url "https://github.com/TheRealKoller/cookidoo-assistant/issues/$i"
-done
+## Development Phases
+
+### Phase 1: Foundation ⏳ IN PROGRESS
+1. ✅ #20 - Initialize Monorepo (DONE)
+2. ⏳ #21 - Evaluate Tech Stack (NEXT - CRITICAL)
+3. 🚨 #19 - Tech-Stack Instructions (IMMEDIATELY after #21)
+4. #22 - Docker cookidoo-mcp
+5. #3 - Setup Shared Library
+6. #1 - Docker assistant services
+7. #2 - CI/CD Pipeline
+
+### Phase 2: Core Features
+1. #23 - MCP Core cookidoo-mcp
+2. #24-28 - Cookidoo MCP Tools
+3. #4 - Database Schema
+4. #5 - Data Access Layer
+5. #6 - Business Logic Services
+6. #7 - MCP Core assistant-mcp
+7. #8-13 - Assistant MCP Tools
+
+### Phase 3: Testing & Documentation
+1. #29 - Testing cookidoo-mcp
+2. #16 - Testing shared/assistant-mcp/api
+3. #17 - E2E Testing
+4. #30 - Docs cookidoo-mcp
+5. #18 - Docs shared/assistant-mcp/api
+
+### Phase 4: REST API (Lower Priority)
+1. #14 - REST API Server
+2. #15 - REST API Endpoints
+
+---
+
+## Quick Reference: Issue Numbers
+
+### Old → New Mapping (Transferred Issues)
+```
+cookidoo-mcp#1  → cookidoo-assistant#20 (Initialize Monorepo) ✅
+cookidoo-mcp#2  → cookidoo-assistant#21 (Evaluate Tech Stack)
+cookidoo-mcp#3  → cookidoo-assistant#22 (Docker cookidoo-mcp)
+cookidoo-mcp#4  → cookidoo-assistant#23 (MCP Core)
+cookidoo-mcp#5  → cookidoo-assistant#24 (search_recipes)
+cookidoo-mcp#6  → cookidoo-assistant#26 (get_recipe_details)
+cookidoo-mcp#7  → cookidoo-assistant#25 (get_recipe_nutrition)
+cookidoo-mcp#8  → cookidoo-assistant#27 (search_ingredients)
+cookidoo-mcp#9  → cookidoo-assistant#28 (add_recipe_to_weekplan)
+cookidoo-mcp#10 → cookidoo-assistant#29 (Testing)
+cookidoo-mcp#11 → cookidoo-assistant#30 (Documentation)
 ```
 
-### 2. Prioritized Implementation Order
-
-#### Phase 1: Foundation (MUST DO FIRST)
-1. cookidoo-mcp #1 - Initialize Monorepo Structure
-2. cookidoo-mcp #2 - Evaluate Cookidoo API Libraries
-3. cookidoo-assistant #3 - Setup shared library
-4. cookidoo-assistant #4 - Database Schema and Migrations
-
-#### Phase 2: Core Infrastructure
-5. cookidoo-mcp #3 - Docker Configuration
-6. cookidoo-assistant #1 - Docker Configuration
-7. cookidoo-mcp #10 - Unit Test Infrastructure
-8. cookidoo-assistant #16 - Test Infrastructure
-
-#### Phase 3: Core Features
-9. cookidoo-mcp #4 - MCP Server Core
-10. cookidoo-assistant #5 - Data Access Layer
-11. cookidoo-assistant #6 - Business Logic Services
-12. cookidoo-assistant #7 - MCP Server Core
-
-#### Phase 4: MCP Tools
-13. cookidoo-mcp #5-9 - All MCP tools for Cookidoo
-14. cookidoo-assistant #8-13 - All MCP tools for Assistant
-
-#### Phase 5: REST API (Lower Priority)
-15. cookidoo-assistant #14-15 - REST API implementation
-
-#### Phase 6: Advanced Testing & Documentation
-16. cookidoo-assistant #17 - E2E Tests
-17. cookidoo-assistant #2 - GitHub Actions CI/CD
-18. cookidoo-mcp #11 - Documentation
-19. cookidoo-assistant #18 - Documentation
+### By Service Label
+- **service:cookidoo-mcp**: #19, #20, #21, #22, #23, #24, #25, #26, #27, #28, #29, #30
+- **service:shared**: #1, #2, #3, #4, #5, #6, #16, #18, #19
+- **service:assistant-mcp**: #1, #2, #7, #8, #9, #10, #11, #12, #13, #16, #17, #18, #19
+- **service:api**: #1, #2, #14, #15, #16, #17, #18, #19
 
 ---
 
-## Issue Statistics
+## Next Actions
 
-### By Priority
-- ⭐ **HIGH Priority**: 21 issues (72%)
-- 🔵 **MEDIUM Priority**: 8 issues (28%)
+1. **Start #21** - Evaluate Cookidoo API Libraries (Python vs TypeScript)
+2. **Immediately after #21**: Do #19 - Create Tech-Stack Instructions
+3. **Then**: Begin parallel work on #22 (Docker cookidoo-mcp) and #3 (Setup Shared)
 
-### By Category
-- **Setup & Infrastructure**: 5 issues
-- **Core Features**: 16 issues
-- **Testing**: 4 issues
-- **Documentation**: 2 issues
-- **CI/CD**: 1 issue
-- **REST API**: 2 issues
-
-### By Repository
-- **cookidoo-mcp**: 11 issues
-- **cookidoo-assistant**: 18 issues
-
----
-
-## Dependencies Graph
-
-### Critical Path (Blocking Issues)
-```
-#1 Monorepo Setup
-  └─> #2 Evaluate APIs
-       └─> #3 Docker (mcp)
-            └─> #4 MCP Core (mcp)
-                 └─> #5-9 MCP Tools (mcp)
-
-#3 Shared Library Setup
-  └─> #4 Database Schema
-       └─> #5 Data Access Layer
-            └─> #6 Business Logic
-                 └─> #7 MCP Core (assistant)
-                      └─> #8-13 MCP Tools (assistant)
-```
-
-### Parallel Tracks
-- **Testing**: Can be setup in parallel with feature development
-- **Documentation**: Can be done continuously or at the end
-- **REST API**: Independent from MCP implementation
-- **CI/CD**: Can be setup anytime after basic structure exists
-
----
-
-## Labels Used
-- `setup`, `infrastructure` - Setup and configuration
-- `feature` - New features
-- `mcp-server`, `mcp-tool` - MCP-related
-- `api`, `rest` - REST API-related
-- `database`, `schema` - Database-related
-- `testing`, `unit-tests`, `integration-tests`, `e2e` - Testing
-- `documentation` - Documentation
-- `ci/cd`, `github-actions` - CI/CD
-- `crud` - CRUD operations
-
----
-
-## Total Estimated Effort
-Based on the scope and complexity, this is a **multi-month project** with:
-- **Phase 1-2 (Foundation)**: 2-3 weeks
-- **Phase 3-4 (Core Features)**: 4-6 weeks
-- **Phase 5-6 (Polish)**: 2-3 weeks
-
-**Total**: 8-12 weeks for full implementation with testing and documentation
+All 30 issues are tracked on the [Project Board](https://github.com/users/TheRealKoller/projects/5).
