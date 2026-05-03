@@ -22,6 +22,105 @@ Dieses Monorepo enthält 4 Services. Jedes Issue MUSS mit dem entsprechenden Ser
 - `service:assistant-mcp` - cookidoo-assistant-mcp Service
 - `service:api` - cookidoo-assistant-api Service
 
+## Issue Bearbeitungs-Workflow
+
+Wenn ein Issue bearbeitet wird (z.B. `implementiere #22`), folge diesem Ablauf:
+
+### 1. Issue-Status auf "In Progress" setzen
+```bash
+gh issue edit ISSUE_NUMBER --add-project "cookidoo-assistant" --repo TheRealKoller/cookidoo-assistant
+# Status via gh project item-edit ändern (siehe unten)
+```
+
+### 2. Feature-Branch von main erstellen
+```bash
+git checkout main
+git pull origin main
+git checkout -b ISSUE_NUMBER-short-description
+git push -u origin ISSUE_NUMBER-short-description
+
+# Beispiel
+git checkout main
+git pull origin main
+git checkout -b 22-docker-config
+git push -u origin 22-docker-config
+```
+
+### 3. Branch im Issue verlinken
+```bash
+gh issue comment ISSUE_NUMBER --body "🔧 Branch erstellt: \`ISSUE_NUMBER-short-description\`" --repo TheRealKoller/cookidoo-assistant
+```
+
+### 4. Implementierung durchführen
+- Code schreiben
+- Commits machen
+
+### 5. Qualitätsprüfung durchführen
+```bash
+# Je nach Service entsprechende Skripte ausführen:
+
+# cookidoo-mcp (Python)
+cd cookidoo-mcp
+black . --check
+ruff check .
+mypy .
+pytest
+
+# TypeScript Services
+cd cookidoo-assistant-{shared,mcp,api}
+npm run lint
+npm run format:check
+npm run type-check
+npm run test
+
+# Gefundene Issues beheben und erneut prüfen
+```
+
+### 6. Pull Request erstellen
+```bash
+gh pr create \
+  --repo TheRealKoller/cookidoo-assistant \
+  --base main \
+  --head ISSUE_NUMBER-short-description \
+  --title "[Service] Short description" \
+  --body "$(cat <<'EOF'
+Closes #ISSUE_NUMBER
+
+## Services Affected
+- service:X
+
+## Changes
+- Change 1
+- Change 2
+
+## Testing
+- [x] Lint passed
+- [x] Format passed
+- [x] Type check passed
+- [x] Tests passed
+EOF
+)"
+```
+
+### 7. PR im Issue verlinken
+```bash
+PR_URL=$(gh pr view --json url -q .url)
+gh issue comment ISSUE_NUMBER --body "🔀 Pull Request: $PR_URL" --repo TheRealKoller/cookidoo-assistant
+```
+
+### 8. Issue-Status auf "In Review" setzen
+```bash
+# Status via gh project item-edit ändern (siehe unten)
+```
+
+### 9. User informieren
+```
+✅ Pull Request erstellt: [PR-URL]
+
+Bitte review das PR. Wenn alles passt:
+`gh pr merge [PR-NUMBER] --repo TheRealKoller/cookidoo-assistant --squash --delete-branch`
+```
+
 ## Workflow-Schritte
 
 ### 1. Issue-Management

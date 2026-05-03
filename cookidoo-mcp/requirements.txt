@@ -1,0 +1,9 @@
+# Core dependencies
+cookidoo-api==0.17.0
+fastapi
+uvicorn
+python-dotenv
+requests
+
+# MCP SDK
+mcp
