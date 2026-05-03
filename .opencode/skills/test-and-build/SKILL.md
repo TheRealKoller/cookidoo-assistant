@@ -3,179 +3,94 @@ name: test-and-build
 description: Testing, build processes, and CI/CD integration for all services
 ---
 
-# Testing & Build Skill
+# Testing & Build
 
-## Beschreibung
-Dieser Skill unterstützt Testing, Build-Prozesse und CI/CD-Integration für die Cookidoo-Unterprojekte.
+Testing, Build und CI/CD für alle Services.
 
-## Kontext
-Arbeitet mit den Unterprojekten:
-- `./cookidoo-mcp/` - MCP Server (vermutlich TypeScript/Node.js)
-- `./cookidoo-assistant/` - Assistant (Tech-Stack projektspezifisch)
+## Quality Gates
 
-## Allgemeine Prinzipien
-
-### Vor jedem Commit
-1. Tests ausführen
-2. Linter prüfen
-3. Type-Checking durchführen
-4. Build erfolgreich durchführen
-
-### Vor jedem Push
-1. Alle Tests erfolgreich
-2. Keine Linter-Fehler
-3. Keine Type-Errors
-4. Build läuft durch
-
-## Standard Node.js/TypeScript Workflows
-
-### 1. Dependencies installieren
-
+### Vor Commit
 ```bash
-# Im Unterprojekt-Verzeichnis
-npm install
-
-# oder mit yarn
-yarn install
-
-# Clean install (empfohlen für CI)
-npm ci
+npm run lint && npm run format:check && npm run type-check && npm test
 ```
 
-### 2. Testing
-
-#### Unit Tests
+### Vor Push
 ```bash
-# Alle Tests ausführen
-npm test
+npm run lint && npm run type-check && npm test && npm run build
+```
 
-# Tests mit Coverage
-npm run test:coverage
+## Node.js/TypeScript Workflows
 
-# Tests im Watch-Mode
-npm run test:watch
+### Dependencies
+```bash
+npm install        # Standard
+npm ci             # Clean install (CI)
+```
 
-# Einzelne Test-Datei
-npm test -- path/to/test.spec.ts
+### Testing
+```bash
+npm test                          # Alle
+npm run test:coverage             # Mit Coverage
+npm run test:watch                # Watch mode
+npm test -- path/to/test.spec.ts  # Einzelne Datei
 
-# Jest spezifisch
-npx jest
+# Jest
 npx jest --verbose
 npx jest --coverage
+npx jest --onlyFailures          # Nur failed
 ```
 
-#### Integration Tests
+### Linting & Formatting
 ```bash
-# Falls separates Script vorhanden
-npm run test:integration
-
-# E2E Tests
-npm run test:e2e
-```
-
-#### Test-Debugging
-```bash
-# Mit Node Inspector
-node --inspect-brk node_modules/.bin/jest --runInBand
-
-# Nur fehlgeschlagene Tests
-npm test -- --onlyFailures
-```
-
-### 3. Linting & Formatting
-
-#### ESLint
-```bash
-# Linting prüfen
+# ESLint
 npm run lint
-
-# Auto-Fix
 npm run lint:fix
-
-# Spezifische Dateien
 npx eslint src/**/*.ts
 
-# Mit Type-Information
-npx eslint --ext .ts,.tsx src/
-```
-
-#### Prettier
-```bash
-# Format prüfen
+# Prettier
 npm run format:check
-
-# Auto-Format
 npm run format
-npm run format:fix
-
-# Einzelne Dateien
 npx prettier --write src/**/*.ts
-```
 
-#### Combined Check
-```bash
-# Empfohlener Pre-Commit Check
+# Combined
 npm run lint && npm run format:check && npm test
 ```
 
-### 4. Type-Checking
-
-#### TypeScript
+### Type-Checking
 ```bash
-# Type-Check
 npm run type-check
 npx tsc --noEmit
-
-# Mit Watch-Mode
 npx tsc --noEmit --watch
-
-# Specific tsconfig
-npx tsc --project tsconfig.build.json --noEmit
 ```
 
-### 5. Build
-
-#### Production Build
+### Build
 ```bash
-# Standard Build
-npm run build
-
-# Clean Build
-npm run clean && npm run build
-
-# Build mit Type-Check
+npm run build                    # Production
+npm run clean && npm run build   # Clean build
 npm run type-check && npm run build
-```
 
-#### Development Build
-```bash
-# Watch-Mode
+# Development
 npm run dev
 npm run watch
-
-# Mit Hot-Reload
-npm run dev:hot
 ```
 
-### 6. Quality Gates (Vor Commit/Push)
+## Pre-Commit Script
 
-#### Vollständiger Pre-Commit Check
 ```bash
 #!/bin/bash
 # pre-commit.sh
+set -e
 
-set -e  # Bei Fehler abbrechen
-
-echo "🔍 Running linter..."
+echo "🔍 Linting..."
 npm run lint
 
-echo "🎨 Checking formatting..."
+echo "🎨 Formatting..."
 npm run format:check
 
 echo "📝 Type checking..."
 npm run type-check
 
-echo "🧪 Running tests..."
+echo "🧪 Testing..."
 npm test
 
 echo "🏗️  Building..."
@@ -184,21 +99,9 @@ npm run build
 echo "✅ All checks passed!"
 ```
 
-#### Schneller Pre-Commit (nur geänderte Dateien)
-```bash
-# Mit lint-staged (wenn konfiguriert)
-npx lint-staged
-
-# Oder manual
-git diff --cached --name-only --diff-filter=ACMR | grep '\.ts$' | xargs npm run lint
-```
-
 ## CI/CD Integration
 
-### GitHub Actions Workflow-Beispiel
-
-Erstelle `.github/workflows/ci.yml` in den Unterprojekten:
-
+### GitHub Actions (`.github/workflows/ci.yml`)
 ```yaml
 name: CI
 
@@ -245,139 +148,102 @@ jobs:
       if: matrix.node-version == '20.x'
 ```
 
-### CI-Status prüfen
-
+### CI Status
 ```bash
-# GitHub Actions Status
 gh run list --limit 5
 gh run view
-
-# Für spezifischen PR
 gh pr checks
-
-# Workflow manuell triggern
 gh workflow run ci.yml
 ```
 
-## Projekt-spezifische Scripts
+## Package.json Scripts
 
-### Package.json Scripts anzeigen
+### Scripts anzeigen
 ```bash
-# Alle verfügbaren Scripts
 npm run
-
-# Oder direkt in package.json schauen
 cat package.json | jq .scripts
 ```
 
-### Häufige Script-Namen
+### Standard Scripts
 ```json
 {
   "scripts": {
-    "dev": "Development server starten",
+    "dev": "Development server",
     "build": "Production build",
-    "test": "Tests ausführen",
-    "test:watch": "Tests im Watch-Mode",
-    "test:coverage": "Tests mit Coverage",
-    "lint": "ESLint prüfen",
-    "lint:fix": "ESLint mit Auto-Fix",
+    "test": "Run tests",
+    "test:watch": "Tests watch mode",
+    "test:coverage": "Tests with coverage",
+    "lint": "ESLint check",
+    "lint:fix": "ESLint auto-fix",
     "format": "Prettier format",
     "format:check": "Prettier check",
-    "type-check": "TypeScript type checking",
-    "clean": "Build-Artefakte löschen",
-    "prepare": "Husky hooks installieren"
+    "type-check": "TypeScript checking",
+    "clean": "Clean build artifacts"
   }
 }
 ```
 
 ## Debugging
 
-### Debug Tests
+### Tests
 ```bash
-# Node Inspector für Jest
+# Node Inspector
 node --inspect-brk node_modules/.bin/jest --runInBand
+# Chrome: chrome://inspect
 
-# Dann in Chrome: chrome://inspect
-```
-
-### Debug Build
-```bash
-# Verbose Build Output
-npm run build -- --verbose
-
-# TypeScript mit Trace
-npx tsc --extendedDiagnostics
-```
-
-### Performance-Analyse
-```bash
-# Jest Performance
+# Performance
 npm test -- --logHeapUsage
+```
 
-# Build Performance
-npx tsc --diagnostics
+### Build
+```bash
+npm run build -- --verbose
+npx tsc --extendedDiagnostics
 ```
 
 ## Best Practices
 
-1. **Tests vor Commits**: Führe immer Tests vor dem Commit aus
-2. **CI nicht ignorieren**: Fixe fehlende CI-Checks sofort
-3. **Coverage im Auge behalten**: Mindestens 80% Coverage anstreben
-4. **Type-Safety**: Keine `any` ohne guten Grund
-5. **Linter-Rules befolgen**: Konsistenter Code-Stil
-6. **Snapshots aktualisieren**: Nur wenn gewollt (`npm test -- -u`)
-7. **Flaky Tests fixen**: Instabile Tests sind technische Schulden
+1. **Tests vor Commits**: Immer Tests laufen lassen
+2. **CI nicht ignorieren**: Fehlende Checks sofort fixen
+3. **Coverage ≥ 80%**: Mindestabdeckung anstreben
+4. **Kein `any`**: Ohne guten Grund vermeiden
+5. **Linter befolgen**: Konsistenter Code-Stil
+6. **Snapshots bewusst updaten**: `npm test -- -u`
+7. **Flaky Tests fixen**: Instabile Tests = Tech Debt
 
 ## Troubleshooting
 
 ### Tests schlagen fehl
 ```bash
-# Cache löschen
 npm test -- --clearCache
-
-# Verbose Output
 npm test -- --verbose
-
-# Einzelnen Test debuggen
 npm test -- --testNamePattern="test name"
 ```
 
 ### Build-Fehler
 ```bash
-# Clean Build
 rm -rf node_modules package-lock.json
-npm install
-npm run build
-
-# TypeScript Errors anzeigen
+npm install && npm run build
 npx tsc --noEmit --pretty
 ```
 
 ### Linter-Fehler
 ```bash
-# Auto-Fix versuchen
 npm run lint:fix
-
-# Spezifische Regel deaktivieren (nur wenn nötig)
-# eslint-disable-next-line rule-name
+# eslint-disable-next-line rule-name  # Nur wenn nötig
 ```
 
-### Dependencies-Probleme
+### Dependencies
 ```bash
-# Outdated packages prüfen
 npm outdated
-
-# Audit für Security-Issues
 npm audit
 npm audit fix
-
-# Dependencies-Baum anzeigen
 npm list --depth=1
 ```
 
 ## Quick Reference
 
-### Vollständiger Check vor Push
+### Vollständiger Check
 ```bash
 npm install && \
 npm run lint && \
@@ -387,19 +253,20 @@ npm test && \
 npm run build
 ```
 
-### Watch-Mode für Development
+### Watch-Mode Development
 ```bash
-# In separaten Terminals
-npm run dev        # Terminal 1: Dev Server
-npm run test:watch # Terminal 2: Tests
-npx tsc --watch    # Terminal 3: Type Checking
+# Terminal 1
+npm run dev
+
+# Terminal 2
+npm run test:watch
+
+# Terminal 3
+npx tsc --watch
 ```
 
 ### CI lokal simulieren
 ```bash
-# Mit act (GitHub Actions lokal)
-act -j test
-
-# Oder manual
+act -j test  # Mit act (GitHub Actions local)
 npm ci && npm run lint && npm test && npm run build
 ```
