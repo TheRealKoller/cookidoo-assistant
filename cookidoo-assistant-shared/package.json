@@ -1,0 +1,31 @@
+{
+  "name": "cookidoo-assistant-shared",
+  "version": "0.1.0",
+  "description": "Shared library for business logic and data access",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "echo 'Dev mode not yet configured - awaiting tech stack decision'",
+    "build": "echo 'Build not yet configured - awaiting tech stack decision'",
+    "test": "echo 'Tests not yet configured - awaiting tech stack decision'",
+    "test:coverage": "echo 'Coverage not yet configured - awaiting tech stack decision'",
+    "lint": "echo 'Linting not yet configured - awaiting tech stack decision'",
+    "lint:fix": "echo 'Linting not yet configured - awaiting tech stack decision'",
+    "format": "echo 'Formatting not yet configured - awaiting tech stack decision'",
+    "format:check": "echo 'Formatting not yet configured - awaiting tech stack decision'",
+    "type-check": "echo 'Type checking not yet configured - awaiting tech stack decision'"
+  },
+  "keywords": [
+    "shared",
+    "library",
+    "database",
+    "business-logic"
+  ],
+  "author": "TheRealKoller",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

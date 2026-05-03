@@ -1,0 +1,48 @@
+{
+  "name": "cookidoo-assistant-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Monorepo for Cookidoo Assistant project with MCP servers and API",
+  "workspaces": [
+    "cookidoo-mcp",
+    "cookidoo-assistant-shared",
+    "cookidoo-assistant-mcp",
+    "cookidoo-assistant-api"
+  ],
+  "scripts": {
+    "setup": "npm install",
+    "clean": "rm -rf node_modules */node_modules */*/node_modules package-lock.json */package-lock.json",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "test:coverage": "npm run test:coverage --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "lint:fix": "npm run lint:fix --workspaces --if-present",
+    "format": "npm run format --workspaces --if-present",
+    "format:check": "npm run format:check --workspaces --if-present",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "dev:mcp": "npm run dev --workspace cookidoo-mcp",
+    "dev:assistant-mcp": "npm run dev --workspace cookidoo-assistant-mcp",
+    "dev:assistant-api": "npm run dev --workspace cookidoo-assistant-api",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "docker:logs": "docker-compose logs -f"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheRealKoller/cookidoo-assistant"
+  },
+  "keywords": [
+    "cookidoo",
+    "mcp",
+    "meal-planning",
+    "thermomix"
+  ],
+  "author": "TheRealKoller",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "devDependencies": {}
+}
