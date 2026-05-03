@@ -27,34 +27,44 @@ cookidoo-assistant/
 
 ### Services
 
-#### 1. cookidoo-mcp (Port 3000)
-MCP Server that interfaces with Cookidoo:
-- Search recipes (freetext, ingredients, filters)
-- Get recipe details and nutrition info
-- Manage week plans in Cookidoo
+#### 1. cookidoo-mcp (Port 3000) - Python
+MCP Server that interfaces with Cookidoo API:
+- **Language**: Python 3.11+
+- **Library**: `cookidoo-api==0.17.0` (miaucl/cookidoo-api)
+- **Features**: Recipe details, Custom/Managed collections, Calendar/Weekplan, Shopping List
+- OAuth authentication with token refresh
+- Full async/await support
 
-#### 2. cookidoo-assistant-shared
+#### 2. cookidoo-assistant-shared - TypeScript
 Shared library containing:
-- Database models and repositories
+- **Language**: TypeScript 5+
+- Database models and repositories (TypeORM/Prisma)
 - Business logic services
 - Common utilities and types
 
-#### 3. cookidoo-assistant-mcp (Port 3001)
+#### 3. cookidoo-assistant-mcp (Port 3001) - TypeScript
 MCP Server for managing user data:
+- **Language**: TypeScript 5+
+- **MCP SDK**: `@modelcontextprotocol/sdk`
 - User profiles and preferences
 - Dietary restrictions and allergies
 - Health data and nutrition targets
 - Recipe ratings (liked/disliked)
 - Week plan management and history
 
-#### 4. cookidoo-assistant-api (Port 3002)
-REST API for future web/mobile UI (lower priority)
+#### 4. cookidoo-assistant-api (Port 3002) - TypeScript
+REST API for future web/mobile UI (lower priority):
+- **Language**: TypeScript 5+
+- **Framework**: Express.js
+- RESTful endpoints
+- Same business logic as assistant-mcp (via shared library)
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js >= 18 or Python >= 3.11 (tech stack TBD - see [Issue #2](https://github.com/TheRealKoller/cookidoo-mcp/issues/2))
+- **Python 3.11+** (for cookidoo-mcp)
+- **Node.js >= 18** (for TypeScript services)
 - Docker and Docker Compose
 - Valid Cookidoo subscription
 
@@ -113,11 +123,30 @@ npm run format
 
 ## 🛠️ Technology Stack
 
-**Status**: 🚧 To be decided in [Issue #21](https://github.com/TheRealKoller/cookidoo-assistant/issues/21)
+**Status**: ✅ Decided in [Issue #21](https://github.com/TheRealKoller/cookidoo-assistant/issues/21)
 
-Options:
-- **TypeScript/Node.js** - Standard for MCP servers
-- **Python** - Better integration with cookidoo-api library
+### Cookidoo-MCP (Python)
+- **Language**: Python 3.11+
+- **MCP SDK**: `mcp` (Python SDK)
+- **Cookidoo API**: `cookidoo-api==0.17.0` (miaucl/cookidoo-api)
+- **Async**: `asyncio` + `aiohttp`
+- **Testing**: `pytest` + `pytest-asyncio`
+- **Type Hints**: Full annotations with `mypy`
+- **Linting/Format**: `ruff`
+
+### TypeScript Services (shared, assistant-mcp, api)
+- **Language**: TypeScript 5+
+- **Runtime**: Node.js 18+
+- **MCP SDK**: `@modelcontextprotocol/sdk` (assistant-mcp only)
+- **Framework**: Express.js (api)
+- **ORM**: TypeORM or Prisma (shared)
+- **Testing**: Jest + Supertest
+- **Linting/Format**: ESLint + Prettier
+
+### Infrastructure
+- **Containerization**: Docker + Docker Compose
+- **Databases**: PostgreSQL (separate instances per service)
+- **Package Management**: npm workspaces (TypeScript), pip (Python)
 
 ## 📊 Development Status
 
@@ -134,7 +163,8 @@ Options:
 
 ### Phase 1: Foundation
 - [x] #20 - Initialize Monorepo Structure ✅ COMPLETED
-- [ ] #21 - Evaluate Cookidoo API Libraries
+- [x] #21 - Evaluate Cookidoo API Libraries ✅ COMPLETED (Decision: Python + miaucl/cookidoo-api)
+- [ ] #19 - Create Tech-Stack-Specific Instructions & Skills 🚧 IN PROGRESS
 - [ ] Setup Docker infrastructure
 - [ ] Database schema design
 

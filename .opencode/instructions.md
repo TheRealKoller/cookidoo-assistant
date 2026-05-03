@@ -24,9 +24,12 @@ cookidoo-assistant/
 #### Service-Beschreibungen
 
 1. **cookidoo-mcp** (`service:cookidoo-mcp`)
-   - MCP Server für Cookidoo API Integration
-   - Tools: Recipe Search, Recipe Details, Nutrition Info, Weekplan Management
-   - Port: 3000
+   - **Language:** Python 3.11+
+   - **Purpose:** MCP Server für Cookidoo API Integration
+   - **Library:** `cookidoo-api==0.17.0` (miaucl/cookidoo-api)
+   - **Tools:** Recipe Details, Collections (Custom/Managed), Custom Recipes, Calendar/Weekplan, Shopping List (Ingredients + Additional Items)
+   - **Port:** 3000
+   - **Features:** OAuth authentication, async/await, comprehensive CRUD operations
 
 2. **cookidoo-assistant-shared** (`service:shared`)
    - Shared Library für alle Services
@@ -132,10 +135,10 @@ Folge der [Conventional Commits](https://www.conventionalcommits.org/) Spezifika
 - `chore:` - Maintenance-Aufgaben (Dependencies, Config, etc.)
 
 **Service Scopes:**
-- `mcp` - cookidoo-mcp
-- `shared` - cookidoo-assistant-shared
-- `assistant-mcp` - cookidoo-assistant-mcp
-- `api` - cookidoo-assistant-api
+- `mcp` - cookidoo-mcp (Python)
+- `shared` - cookidoo-assistant-shared (TypeScript)
+- `assistant-mcp` - cookidoo-assistant-mcp (TypeScript)
+- `api` - cookidoo-assistant-api (TypeScript)
 
 **Beispiele:**
 ```
@@ -145,6 +148,240 @@ docs: update README with new architecture
 test(assistant-mcp): add unit tests for user profile service
 refactor(api): extract middleware to separate modules
 chore: update dependencies across all services
+chore(mcp): upgrade cookidoo-api to 0.18.0
+```
+
+### Python Code Style (cookidoo-mcp)
+
+**Formatter & Linter:** `ruff` (all-in-one: linting, formatting, import sorting)
+
+```bash
+# Format code
+ruff format .
+
+# Lint code
+ruff check .
+
+# Fix auto-fixable issues
+ruff check --fix .
+```
+
+**Naming Conventions:**
+- Files: `snake_case.py`
+- Classes: `PascalCase`
+- Functions/Methods: `snake_case()`
+- Constants: `UPPER_SNAKE_CASE`
+- Private methods: `_leading_underscore()`
+- Module-level private: `_single_underscore`
+
+**Type Hints:**
+- Use type hints for all function signatures
+- Use `typing` module for complex types
+- Run `mypy` for type checking
+
+**Example:**
+```python
+from typing import Optional, List
+from cookidoo_api import Cookidoo
+from cookidoo_api.types import CookidooRecipeDetails
+
+async def get_recipe_details(
+    cookidoo: Cookidoo,
+    recipe_id: str
+) -> Optional[CookidooRecipeDetails]:
+    """Fetch recipe details from Cookidoo API.
+    
+    Args:
+        cookidoo: Authenticated Cookidoo instance
+        recipe_id: Recipe ID (e.g., "r59322")
+        
+    Returns:
+        Recipe details or None if not found
+    """
+    try:
+        return await cookidoo.get_recipe_details(recipe_id)
+    except CookidooException as e:
+        logger.error(f"Failed to fetch recipe {recipe_id}: {e}")
+        return None
+```
+
+**Docstrings:**
+- Use Google-style docstrings
+- Document all public functions, classes, and methods
+- Include Args, Returns, Raises sections
+
+**Imports:**
+- Standard library first
+- Third-party libraries second
+- Local modules last
+- Sorted alphabetically within each group
+- `ruff` handles this automatically
+
+**Testing:**
+- Use `pytest` for all tests
+- Place tests in `tests/` directory mirroring `src/` structure
+- Test file naming: `test_<module>.py`
+- Test function naming: `test_<function>_<scenario>()`
+- Use `pytest-asyncio` for async tests
+- Use fixtures for common setup
+
+**Example:**
+```python
+import pytest
+from cookidoo_mcp.tools import get_recipe_details
+
+@pytest.mark.asyncio
+async def test_get_recipe_details_success(mock_cookidoo):
+    """Test successful recipe details retrieval."""
+    result = await get_recipe_details(mock_cookidoo, "r59322")
+    assert result is not None
+    assert result.id == "r59322"
+
+@pytest.mark.asyncio
+async def test_get_recipe_details_not_found(mock_cookidoo):
+    """Test recipe not found returns None."""
+    result = await get_recipe_details(mock_cookidoo, "invalid")
+    assert result is None
+```
+
+### TypeScript Code Style (shared, assistant-mcp, api)
+
+**Formatter & Linter:** ESLint + Prettier
+
+```bash
+# Format code
+npm run format
+
+# Lint code
+npm run lint
+
+# Fix auto-fixable issues
+npm run lint:fix
+```
+
+**Naming Conventions:**
+- Files: `kebab-case.ts` or `PascalCase.ts` (for classes)
+- Classes/Interfaces/Types: `PascalCase`
+- Functions/Variables: `camelCase`
+- Constants: `UPPER_SNAKE_CASE`
+- Private properties: `#privateField` or `_privateField`
+
+**Type Safety:**
+- Use strict TypeScript mode
+- Avoid `any` - use `unknown` or proper types
+- Use `interface` for object shapes, `type` for unions/intersections
+- Export types alongside implementations
+
+**Example:**
+```typescript
+interface RecipeSearchParams {
+  query?: string;
+  ingredients?: string[];
+  maxResults?: number;
+}
+
+interface RecipeDetails {
+  id: string;
+  title: string;
+  ingredients: Ingredient[];
+  instructions: string[];
+}
+
+async function searchRecipes(
+  params: RecipeSearchParams
+): Promise<RecipeDetails[]> {
+  // Implementation
+}
+```
+
+**Testing:**
+- Use `Jest` for unit tests
+- Use `Supertest` for API integration tests
+- Test file naming: `<module>.test.ts` or `<module>.spec.ts`
+- Place tests next to source files or in `tests/` directory
+
+**Example:**
+```typescript
+import { searchRecipes } from './recipes';
+
+describe('searchRecipes', () => {
+  it('should return recipes matching query', async () => {
+    const results = await searchRecipes({ query: 'pasta' });
+    expect(results).toHaveLength(10);
+    expect(results[0].title).toContain('Pasta');
+  });
+
+  it('should filter by ingredients', async () => {
+    const results = await searchRecipes({ ingredients: ['tomato'] });
+    expect(results.every(r => 
+      r.ingredients.some(i => i.name.includes('tomato'))
+    )).toBe(true);
+  });
+});
+```
+
+### Project Structure
+
+#### cookidoo-mcp (Python)
+```
+cookidoo-mcp/
+├── src/
+│   ├── cookidoo_mcp/
+│   │   ├── __init__.py
+│   │   ├── server.py              # MCP server entry point
+│   │   ├── tools/                 # MCP tool implementations
+│   │   │   ├── __init__.py
+│   │   │   ├── recipes.py         # Recipe-related tools
+│   │   │   ├── collections.py     # Collection tools
+│   │   │   ├── calendar.py        # Calendar/weekplan tools
+│   │   │   └── shopping_list.py   # Shopping list tools
+│   │   ├── auth.py                # Authentication logic
+│   │   ├── config.py              # Configuration
+│   │   └── utils.py               # Utility functions
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py                # Pytest fixtures
+│   ├── test_tools/
+│   │   ├── test_recipes.py
+│   │   ├── test_collections.py
+│   │   ├── test_calendar.py
+│   │   └── test_shopping_list.py
+│   └── test_auth.py
+├── docs/                          # Documentation
+├── .env.example                   # Environment template
+├── requirements.txt               # Python dependencies
+├── requirements-dev.txt           # Dev dependencies (pytest, mypy, ruff)
+├── pyproject.toml                 # Python project config (ruff, mypy)
+├── Dockerfile                     # Python 3.11+ runtime
+└── README.md
+```
+
+#### TypeScript Services (shared, assistant-mcp, api)
+```
+<service-name>/
+├── src/
+│   ├── config/                    # Configuration
+│   ├── models/                    # Data models (TypeORM/Prisma)
+│   ├── repositories/              # Data access layer
+│   ├── services/                  # Business logic
+│   ├── tools/                     # MCP tools (assistant-mcp only)
+│   ├── routes/                    # Express routes (api only)
+│   ├── middleware/                # Middleware
+│   ├── types/                     # TypeScript type definitions
+│   ├── utils/                     # Utility functions
+│   └── index.ts                   # Entry point
+├── tests/
+│   ├── unit/                      # Unit tests
+│   ├── integration/               # Integration tests
+│   ├── fixtures/                  # Test data
+│   └── helpers/                   # Test utilities
+├── migrations/                    # Database migrations
+├── docs/                          # Documentation
+├── .env.example                   # Environment template
+├── package.json
+├── tsconfig.json
+├── Dockerfile
+└── README.md
 ```
 
 ### Pull Requests
@@ -187,11 +424,34 @@ Bei Referenzen auf alte Issues aus `cookidoo-mcp` immer die neuen Nummern verwen
 
 ## Tech Stack
 
-**Status:** 🚧 Noch nicht entschieden - siehe Issue #21
+**Status:** ✅ Entschieden - siehe Issue #21
 
-Nach Entscheidung in Issue #21 (Evaluate Cookidoo API Libraries):
-- Entweder TypeScript/Node.js oder Python
-- Issue #19 wird tech-stack-spezifische Instructions erstellen
+### Cookidoo-MCP Service (Python)
+- **Language:** Python 3.11+
+- **MCP SDK:** `mcp` Python SDK (Model Context Protocol)
+- **Cookidoo API:** `cookidoo-api==0.17.0` (miaucl/cookidoo-api)
+- **Async:** `asyncio` + `aiohttp`
+- **Testing:** `pytest` + `pytest-asyncio`
+- **Type Hints:** Full type annotations with `mypy`
+- **Linting:** `ruff` (replaces flake8, isort, black)
+- **Package Management:** `pip` + `requirements.txt`
+
+### Other Services (TypeScript)
+- **Language:** TypeScript 5+
+- **Runtime:** Node.js 18+
+- **MCP SDK:** `@modelcontextprotocol/sdk` (cookidoo-assistant-mcp only)
+- **Framework:** Express.js (cookidoo-assistant-api)
+- **ORM:** TypeORM or Prisma (shared library)
+- **Testing:** Jest + Supertest
+- **Linting:** ESLint + Prettier
+- **Package Management:** npm workspaces
+
+### Why Python for cookidoo-mcp?
+- Native integration with `cookidoo-api` library (no bridge needed)
+- 85% feature completeness out-of-the-box
+- Actively maintained upstream (last release Apr 2026)
+- Comprehensive test coverage and documentation
+- MCP Python SDK available with async/await support
 
 ## Deployment
 
@@ -220,10 +480,11 @@ docker-compose up --build
 
 ### Prerequisites
 
-- Node.js >= 18 (oder Python >= 3.11 nach Tech-Stack-Entscheidung)
+- **Python 3.11+** (für cookidoo-mcp)
+- **Node.js >= 18** (für TypeScript Services)
 - Docker & Docker Compose
 - PostgreSQL (via Docker)
-- Gültiges Cookidoo-Abo
+- Gültiges Cookidoo-Abo (für Testing und Development)
 
 ### Setup
 
@@ -232,8 +493,16 @@ docker-compose up --build
 git clone https://github.com/TheRealKoller/cookidoo-assistant.git
 cd cookidoo-assistant
 
-# Dependencies installieren
+# TypeScript Services: Dependencies installieren
 npm install
+
+# Python Service (cookidoo-mcp): Virtual Environment + Dependencies
+cd cookidoo-mcp
+python3 -m venv venv
+source venv/bin/activate  # Linux/Mac
+# oder: venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+cd ..
 
 # Environment Variables konfigurieren
 cp cookidoo-mcp/.env.example cookidoo-mcp/.env
@@ -245,9 +514,9 @@ cp cookidoo-assistant-api/.env.example cookidoo-assistant-api/.env
 docker-compose up -d postgres
 
 # Services starten
-npm run dev:mcp                  # Port 3000
-npm run dev:assistant-mcp        # Port 3001
-npm run dev:assistant-api        # Port 3002
+cd cookidoo-mcp && source venv/bin/activate && python src/server.py  # Port 3000
+npm run dev:assistant-mcp                                              # Port 3001
+npm run dev:assistant-api                                              # Port 3002
 ```
 
 ## Weitere Informationen

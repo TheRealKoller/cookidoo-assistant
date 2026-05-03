@@ -21,11 +21,12 @@ Dieses Monorepo konsolidiert Issues aus zwei ehemaligen Repositories:
   - Dependencies: None
   - Status: Done
 
-- **#21** - Setup: Evaluate Cookidoo API Libraries
+- **#21** - Setup: Evaluate Cookidoo API Libraries ✅ COMPLETED
   - Dependencies: None
-  - Status: Todo
-  - **BLOCKS**: #19, #22, #23-28
-  - Description: Evaluate miaucl/cookidoo-api (Python) vs tobim-dev/cookidoo-scraper (TypeScript)
+  - Status: Done
+  - **Decision**: Use miaucl/cookidoo-api (Python) directly
+  - **Tech Stack**: Python 3.11+ for cookidoo-mcp service
+  - **TRIGGERS**: #19 (MUST be done immediately)
 
 - **#22** - Setup: Docker Configuration for cookidoo-mcp
   - Dependencies: #21 (tech stack decision)
@@ -204,12 +205,12 @@ Dieses Monorepo konsolidiert Issues aus zwei ehemaligen Repositories:
 
 ### 🎯 Meta
 
-- **#19** - Meta: Create Tech-Stack-Specific Instructions and Skills
-  - Dependencies: #21 (tech stack decision)
-  - Status: Todo
+- **#19** - Meta: Create Tech-Stack-Specific Instructions and Skills 🚧 IN PROGRESS
+  - Dependencies: #21 ✅ (completed)
+  - Status: In Progress
   - Services: ALL
-  - **CRITICAL**: Must be done immediately after #21
-  - Description: Update .opencode/ with tech-stack-specific workflows
+  - **CRITICAL**: Immediately started after #21 completion
+  - Description: Python MCP + TypeScript instructions and skills created
 
 ---
 
