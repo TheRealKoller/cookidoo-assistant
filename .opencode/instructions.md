@@ -9,6 +9,46 @@ Dieses Monorepo enthält die komplette Cookidoo Assistant Platform - ein AI-powe
 - **GitHub Repository**: https://github.com/TheRealKoller/cookidoo-assistant
 - **Project Board**: https://github.com/users/TheRealKoller/projects/5
 
+## ⚠️ CRITICAL: Issue Implementation Workflow
+
+**BEFORE implementing ANY GitHub issue, you MUST:**
+
+1. **Load the workflow skill**: `github-workflow`
+2. **Follow steps 1-9 EXACTLY** as documented in the skill
+3. **NEVER commit directly to `main`** (except for approved exceptions below)
+4. **ALWAYS create a feature branch**: `ISSUE_NUMBER-short-description`
+5. **ALWAYS create a Pull Request** linking to the issue
+6. **ALWAYS run tests** before creating PR
+7. **ALWAYS update issue status** on Project Board
+
+### Approved Exceptions for Direct `main` Commits
+
+Direct commits to `main` are ONLY allowed for:
+- **Critical hotfixes** requiring immediate deployment
+- **CI/CD configuration changes** (.github/workflows/*)
+- **Documentation-only changes** (*.md files) with user approval
+- **Dependency updates** with passing CI
+
+**ALL OTHER CHANGES MUST GO THROUGH PR WORKFLOW**
+
+### Quick Reference
+
+```bash
+# 1. Load skill first
+skill load github-workflow
+
+# 2. Create feature branch
+git checkout -b ISSUE_NUMBER-description
+
+# 3. Implement, test, commit
+
+# 4. Push and create PR
+git push -u origin ISSUE_NUMBER-description
+gh pr create --base main --head ISSUE_NUMBER-description
+```
+
+**Violation of this workflow is a critical error and must be corrected immediately.**
+
 ### Monorepo-Struktur
 
 Dieses Repository ist als **Monorepo** organisiert und enthält 4 Services:
