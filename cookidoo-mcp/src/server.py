@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from src.logging_config import logger
 from src.middleware import auth_middleware
 from src.cookidoo_client import cookidoo_connection
+from src.tools.recipe_details import get_recipe_details
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -47,6 +48,18 @@ async def health_check():
         "version": "0.1.0",
         "cookidoo_connected": cookidoo_connection._client is not None
     })
+
+@app.post("/tools/get_recipe_details")
+async def handle_get_recipe_details(recipe_id: str):
+    """Get full recipe details by ID"""
+    try:
+        details = await get_recipe_details(recipe_id)
+        return JSONResponse(details.model_dump())
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=404)
+    except Exception as e:
+        logger.error(f"Error in get_recipe_details: {e}", exc_info=True)
+        return JSONResponse({"error": "Internal error"}, status_code=500)
 
 if __name__ == "__main__":
     import uvicorn
