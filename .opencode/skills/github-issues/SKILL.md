@@ -9,33 +9,45 @@ Kompakter Workflow für GitHub Issues mit gh CLI.
 
 **WICHTIG**: Bei fehlenden Berechtigungen User um Autorisierung bitten!
 
+## ⚠️ PFLICHT-CHECKLISTE beim Issue-Erstellen
+
+Jedes Issue MUSS diese Schritte durchlaufen:
+
+- [ ] Issue mit `gh issue create` erstellen
+- [ ] **ZWINGEND**: Issue zum Project Board hinzufügen mit `gh project item-add 5 --owner TheRealKoller --url "$ISSUE_URL"`
+- [ ] Mindestens ein Service-Label setzen (`service:cookidoo-mcp`, `service:shared`, `service:assistant-mcp`, `service:api`)
+
+**Empfohlen**: Nutze den kombinierten Command (siehe unten) um beide Schritte in einem durchzuführen!
+
 ## Repository-Kontext
 - **Repo**: TheRealKoller/cookidoo-assistant
-- **Project Board**: https://github.com/users/TheRealKoller/projects/5
+- **Project Board**: https://github.com/users/TheRealKoller/projects/5 (Project ID: 5)
 - **Service Labels**: `service:cookidoo-mcp`, `service:shared`, `service:assistant-mcp`, `service:api`
 
 ## Issues erstellen
 
-### Standard Issue
-```bash
-gh issue create \
-  --repo TheRealKoller/cookidoo-assistant \
-  --title "TITLE" \
-  --body "DESCRIPTION" \
-  --label "service:SERVICE"
-```
-
-### Mit Project Board (ZWINGEND!)
+### ✅ EMPFOHLENE METHODE: Issue + Project Board in einem Command
 ```bash
 ISSUE_URL=$(gh issue create \
   --repo TheRealKoller/cookidoo-assistant \
   --title "TITLE" \
   --body "DESCRIPTION" \
   --label "service:SERVICE" \
-  --format json | jq -r '.url')
-
-# Zum Project Board hinzufügen
+  --format json | jq -r '.url') && \
 gh project item-add 5 --owner TheRealKoller --url "$ISSUE_URL"
+```
+
+**Wichtig**: Der `&&` Operator stellt sicher, dass das Issue nur zum Board hinzugefügt wird, wenn die Erstellung erfolgreich war.
+
+### ⚠️ NUR in Ausnahmefällen: Issue ohne Project Board
+```bash
+# ACHTUNG: Issue wird NICHT im Project Board sichtbar sein!
+# Danach MANUELL zum Board hinzufügen (siehe unten)
+gh issue create \
+  --repo TheRealKoller/cookidoo-assistant \
+  --title "TITLE" \
+  --body "DESCRIPTION" \
+  --label "service:SERVICE"
 ```
 
 ### Interaktiv

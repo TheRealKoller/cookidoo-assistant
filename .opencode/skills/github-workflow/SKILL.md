@@ -8,9 +8,28 @@ description: GitHub Issues, Project Boards, and Pull Request management for the 
 ## Beschreibung
 Dieser Skill unterstützt das Management von GitHub Issues, Project Boards und Pull Requests für das Cookidoo Assistant Monorepo.
 
+## ⚠️ PFLICHT-CHECKLISTE beim Issue-Erstellen
+
+**Jedes neue Issue MUSS diese Schritte durchlaufen:**
+
+- [ ] Issue mit `gh issue create` erstellen
+- [ ] **ZWINGEND**: Issue zum Project Board (ID: 5) hinzufügen
+- [ ] Service-Label setzen (`service:cookidoo-mcp`, `service:shared`, `service:assistant-mcp`, `service:api`)
+
+**Empfohlener Command (kombiniert beide Schritte):**
+```bash
+ISSUE_URL=$(gh issue create \
+  --repo TheRealKoller/cookidoo-assistant \
+  --title "TITLE" \
+  --body "DESCRIPTION" \
+  --label "service:SERVICE" \
+  --format json | jq -r '.url') && \
+gh project item-add 5 --owner TheRealKoller --url "$ISSUE_URL"
+```
+
 ## Kontext
 - **Repository**: https://github.com/TheRealKoller/cookidoo-assistant (Monorepo)
-- **Project Board**: https://github.com/users/TheRealKoller/projects/5
+- **Project Board**: https://github.com/users/TheRealKoller/projects/5 (Project ID: 5)
 - **Archived Repository**: https://github.com/TheRealKoller/cookidoo-mcp (nicht mehr aktiv)
 
 ## Service Labels
@@ -130,37 +149,31 @@ Bitte review das PR. Wenn alles passt:
 
 ### 1. Issue-Management
 
-#### Neues Issue erstellen
+#### ✅ Neues Issue erstellen (EMPFOHLENE METHODE)
 ```bash
-# Issue mit Service-Label erstellen
-gh issue create \
-  --repo TheRealKoller/cookidoo-assistant \
-  --title "TITLE" \
-  --body "DESCRIPTION" \
-  --label "service:cookidoo-mcp"
-
-# Beispiel für Shared Library Issue
-gh issue create \
-  --repo TheRealKoller/cookidoo-assistant \
-  --title "Add database migration helper" \
-  --body "Implement migration helper for database updates" \
-  --label "service:shared"
-```
-
-#### Issue zum Project Board hinzufügen (ZWINGEND ERFORDERLICH!)
-```bash
-# WICHTIG: JEDES neue Issue MUSS zum Project Board hinzugefügt werden!
-# Issue-URL aus vorherigem Schritt verwenden
-gh project item-add 5 --owner TheRealKoller --url https://github.com/TheRealKoller/cookidoo-assistant/issues/ISSUE_NUMBER
-
-# Beispiel - direkt nach Issue-Erstellung:
+# Issue erstellen UND zum Project Board hinzufügen in einem Command
 ISSUE_URL=$(gh issue create \
   --repo TheRealKoller/cookidoo-assistant \
   --title "TITLE" \
   --body "DESCRIPTION" \
-  --label "service:cookidoo-mcp" \
-  --format json | jq -r '.url')
+  --label "service:SERVICE" \
+  --format json | jq -r '.url') && \
 gh project item-add 5 --owner TheRealKoller --url "$ISSUE_URL"
+
+# Beispiel für cookidoo-mcp Service
+ISSUE_URL=$(gh issue create \
+  --repo TheRealKoller/cookidoo-assistant \
+  --title "Feature: Add recipe search tool" \
+  --body "Implement search functionality for recipes" \
+  --label "service:cookidoo-mcp" \
+  --format json | jq -r '.url') && \
+gh project item-add 5 --owner TheRealKoller --url "$ISSUE_URL"
+```
+
+#### ⚠️ Issue zum Project Board hinzufügen (Falls vergessen)
+```bash
+# Falls ein Issue erstellt wurde ohne es zum Board hinzuzufügen:
+gh project item-add 5 --owner TheRealKoller --url https://github.com/TheRealKoller/cookidoo-assistant/issues/ISSUE_NUMBER
 ```
 
 **KRITISCH**: Ohne Hinzufügen zum Project Board sind Issues nicht im zentralen Board sichtbar!
