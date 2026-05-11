@@ -117,6 +117,55 @@ npm run lint
 npm run format
 ```
 
+## 🔄 CI/CD Workflows
+
+### Continuous Integration (CI)
+**Trigger:** On every push to `main` and on all pull requests
+
+The CI workflow runs automatically and includes:
+- **Linting**: Code style checks with ESLint and Prettier
+- **Type Checking**: TypeScript type validation
+- **Unit Tests**: Jest tests for TypeScript services, pytest for Python
+- **Test Coverage**: Uploaded to Codecov
+- **Build**: Compiles all TypeScript services
+- **Docker**: Builds Docker images (without pushing)
+
+**Status:** [![CI](https://github.com/TheRealKoller/cookidoo-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/TheRealKoller/cookidoo-assistant/actions/workflows/ci.yml)
+
+### Release
+**Trigger:** On version tag push (e.g., `v1.0.0`)
+
+Creates a new release with:
+- **Versioned Docker Images**: Semantic versioning (major.minor.patch)
+- **GitHub Container Registry**: Images pushed to `ghcr.io`
+- **GitHub Release**: Auto-generated release notes
+- **Changelog**: Git log-based changelog
+
+**Usage:**
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+**Status:** [![Release](https://github.com/TheRealKoller/cookidoo-assistant/actions/workflows/release.yml/badge.svg)](https://github.com/TheRealKoller/cookidoo-assistant/actions/workflows/release.yml)
+
+### E2E Tests
+**Trigger:** Manual dispatch or on PR changes to service code
+
+End-to-end testing workflow:
+- Spins up full docker-compose stack
+- Waits for service health checks
+- Runs E2E test suite
+- Captures logs on failure
+- Cleans up resources
+
+**Manual Trigger:**
+```bash
+gh workflow run e2e.yml --repo TheRealKoller/cookidoo-assistant
+```
+
+Or via GitHub Actions UI: Actions → E2E Tests → Run workflow
+
 ## 📚 Documentation
 
 - **Repository**: https://github.com/TheRealKoller/cookidoo-assistant
