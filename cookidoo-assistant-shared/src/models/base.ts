@@ -2,7 +2,7 @@
  * Base entity interface for all database models
  */
 export interface BaseEntity {
-  id: number;
+  id: string; // UUID
   createdAt: Date;
   updatedAt: Date;
 }

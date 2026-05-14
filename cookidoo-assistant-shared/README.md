@@ -211,7 +211,29 @@ LOG_LEVEL=info
 
 ## Database Schema
 
-Database schema and migrations will be implemented in Issue #4.
+✅ **Schema Implemented** - See [Database Schema Documentation](./docs/database-schema.md)
+
+The database uses PostgreSQL with 8 core tables:
+- `users` - Core user accounts
+- `user_profiles` - Physical attributes (height, weight, age, gender)
+- `dietary_preferences` - Diet type (omnivor, vegetarian, vegan, pescetarian)
+- `allergies` - User allergies with severity levels
+- `health_data` - Health goals and nutrition targets
+- `recipe_ratings` - Recipe preferences (liked/disliked)
+- `week_plans` - Weekly meal plans
+- `week_plan_meals` - Individual meals within plans
+
+### Running Migrations
+
+```typescript
+import { db } from 'cookidoo-assistant-shared/db';
+import { migrationManager } from 'cookidoo-assistant-shared/db';
+
+await db.connect(config);
+await migrationManager.runMigrations('./migrations');
+```
+
+For detailed schema information, see [docs/database-schema.md](./docs/database-schema.md).
 
 ## Testing
 
