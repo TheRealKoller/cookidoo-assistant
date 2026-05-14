@@ -1,86 +1,82 @@
 import { BaseEntity } from './base.js';
 
 /**
- * User profile entity
+ * User entity - core user table
+ */
+export interface User extends BaseEntity {
+  // Only contains id, createdAt, updatedAt from BaseEntity
+}
+
+/**
+ * User profile entity - physical attributes and basic info
  */
 export interface UserProfile extends BaseEntity {
   userId: string;
-  name: string;
-  email: string;
-  avatarUrl?: string;
-  preferences?: Record<string, unknown>;
+  height?: number; // in cm
+  weight?: number; // in kg
+  age?: number;
+  gender?: 'male' | 'female' | 'other';
 }
 
 /**
- * Dietary preference entity
+ * Dietary preference entity - user's diet type
  */
 export interface DietaryPreference extends BaseEntity {
   userId: string;
-  type:
-    | 'vegetarian'
-    | 'vegan'
-    | 'pescatarian'
-    | 'keto'
-    | 'paleo'
-    | 'low-carb'
-    | 'gluten-free'
-    | 'dairy-free'
-    | 'other';
-  description?: string;
-  isActive: boolean;
+  dietType: 'omnivor' | 'vegetarian' | 'vegan' | 'pescetarian';
 }
 
 /**
- * Allergy entity
+ * Allergy entity - user allergies and intolerances
  */
 export interface Allergy extends BaseEntity {
   userId: string;
-  name: string;
+  allergen: string;
   severity: 'mild' | 'moderate' | 'severe';
-  notes?: string;
 }
 
 /**
- * Health data entity
+ * Health data entity - health goals and nutrition targets
  */
 export interface HealthData extends BaseEntity {
   userId: string;
-  dataType: 'weight' | 'height' | 'blood-pressure' | 'blood-sugar' | 'cholesterol' | 'other';
-  value: number;
-  unit: string;
-  notes?: string;
-  recordedAt: Date;
+  activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+  healthGoal: 'lose_weight' | 'maintain_weight' | 'gain_weight';
+  calorieTarget?: number; // daily target
+  proteinTarget?: number; // in grams
+  fatTarget?: number; // in grams
+  carbsTarget?: number; // in grams
+  autoCalculated: boolean; // was target auto-calculated?
 }
 
 /**
- * Recipe rating entity
+ * Recipe rating entity - user recipe preferences
  */
 export interface RecipeRating extends BaseEntity {
   userId: string;
-  recipeId: string;
-  rating: number;
-  comment?: string;
-  wouldMakeAgain: boolean;
+  recipeId: string; // Cookidoo recipe ID
+  liked: boolean; // true=liked, false=disliked
+  automatic: boolean; // auto-tracked vs manual feedback
+  count: number; // how many times this rating occurred
 }
 
 /**
- * Week plan entity
+ * Week plan entity - weekly meal plans
  */
 export interface WeekPlan extends BaseEntity {
   userId: string;
   weekStartDate: Date;
-  name?: string;
-  isActive: boolean;
+  status: 'draft' | 'active' | 'completed' | 'archived';
 }
 
 /**
- * Week plan meal entity
+ * Week plan meal entity - individual meals in a week plan
  */
 export interface WeekPlanMeal extends BaseEntity {
-  weekPlanId: number;
-  recipeId: string;
-  dayOfWeek: 0 | 1 | 2 | 3 | 4 | 5 | 6; // 0 = Sunday, 6 = Saturday
-  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  servings?: number;
-  notes?: string;
+  weekPlanId: string;
+  dayOfWeek: number; // 0=Monday, 6=Sunday
+  recipeId: string; // Cookidoo recipe ID
+  recipeTitle: string; // cached for convenience
+  position: number; // for multiple options: 0=option1, 1=option2
+  selected: boolean; // is this option selected?
 }

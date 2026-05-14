@@ -17,7 +17,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Find entity by ID
    */
-  async findById(id: number): Promise<T | null> {
+  async findById(id: string): Promise<T | null> {
     try {
       const rows = await this.sql<T[]>`
         SELECT * FROM ${this.sql(this.tableName)}
@@ -34,7 +34,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Find entity by ID or throw
    */
-  async findByIdOrFail(id: number): Promise<T> {
+  async findByIdOrFail(id: string): Promise<T> {
     const entity = await this.findById(id);
     if (!entity) {
       throw new NotFoundError(this.tableName, id);
@@ -88,7 +88,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Update entity
    */
-  async update(id: number, data: UpdateEntity<T>): Promise<T> {
+  async update(id: string, data: UpdateEntity<T>): Promise<T> {
     try {
       const rows = await this.sql<T[]>`
         UPDATE ${this.sql(this.tableName)}
@@ -117,7 +117,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
   /**
    * Delete entity
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     try {
       const rows = await this.sql`
         DELETE FROM ${this.sql(this.tableName)}

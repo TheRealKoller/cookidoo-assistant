@@ -8,6 +8,7 @@ import {
   WeekPlan,
   WeekPlanMeal,
 } from '../models/entities.js';
+import { CreateEntity } from '../models/base.js';
 
 /**
  * User Profile Repository
@@ -92,40 +93,26 @@ export class HealthDataRepository extends BaseRepository<HealthData> {
     super('health_data');
   }
 
-  async findByUserId(userId: string, limit?: number): Promise<HealthData[]> {
-    if (limit) {
-      return await this.sql<HealthData[]>`
-        SELECT * FROM ${this.sql(this.tableName)}
-        WHERE user_id = ${userId}
-        ORDER BY recorded_at DESC
-        LIMIT ${limit}
-      `;
-    }
-    return await this.sql<HealthData[]>`
+  /**
+   * Find health data by user ID (one-to-one relationship)
+   */
+  async findByUserId(userId: string): Promise<HealthData | null> {
+    const result = await this.sql<HealthData[]>`
       SELECT * FROM ${this.sql(this.tableName)}
       WHERE user_id = ${userId}
-      ORDER BY recorded_at DESC
     `;
+    return result[0] || null;
   }
 
-  async findByType(
-    userId: string,
-    dataType: HealthData['dataType'],
-    limit?: number
-  ): Promise<HealthData[]> {
-    if (limit) {
-      return await this.sql<HealthData[]>`
-        SELECT * FROM ${this.sql(this.tableName)}
-        WHERE user_id = ${userId} AND data_type = ${dataType}
-        ORDER BY recorded_at DESC
-        LIMIT ${limit}
-      `;
+  /**
+   * Create or update health data for a user
+   */
+  async upsert(data: Partial<HealthData> & { userId: string }): Promise<HealthData> {
+    const existing = await this.findByUserId(data.userId);
+    if (existing) {
+      return await this.update(existing.id, data);
     }
-    return await this.sql<HealthData[]>`
-      SELECT * FROM ${this.sql(this.tableName)}
-      WHERE user_id = ${userId} AND data_type = ${dataType}
-      ORDER BY recorded_at DESC
-    `;
+    return await this.create(data as CreateEntity<HealthData>);
   }
 }
 
@@ -181,11 +168,19 @@ export class WeekPlanRepository extends BaseRepository<WeekPlan> {
   async findActiveByUserId(userId: string): Promise<WeekPlan | null> {
     const rows = await this.sql<WeekPlan[]>`
       SELECT * FROM ${this.sql(this.tableName)}
-      WHERE user_id = ${userId} AND is_active = true
+      WHERE user_id = ${userId} AND status = 'active'
       ORDER BY week_start_date DESC
       LIMIT 1
     `;
     return rows[0] || null;
+  }
+
+  async findByStatus(userId: string, status: WeekPlan['status']): Promise<WeekPlan[]> {
+    return await this.sql<WeekPlan[]>`
+      SELECT * FROM ${this.sql(this.tableName)}
+      WHERE user_id = ${userId} AND status = ${status}
+      ORDER BY week_start_date DESC
+    `;
   }
 
   async findByWeekStartDate(userId: string, weekStartDate: Date): Promise<WeekPlan | null> {
@@ -205,33 +200,33 @@ export class WeekPlanMealRepository extends BaseRepository<WeekPlanMeal> {
     super('week_plan_meals');
   }
 
-  async findByWeekPlanId(weekPlanId: number): Promise<WeekPlanMeal[]> {
+  async findByWeekPlanId(weekPlanId: string): Promise<WeekPlanMeal[]> {
     return await this.sql<WeekPlanMeal[]>`
       SELECT * FROM ${this.sql(this.tableName)}
       WHERE week_plan_id = ${weekPlanId}
-      ORDER BY day_of_week ASC, meal_type ASC
+      ORDER BY day_of_week ASC, position ASC
     `;
   }
 
   async findByDay(
-    weekPlanId: number,
+    weekPlanId: string,
     dayOfWeek: WeekPlanMeal['dayOfWeek']
   ): Promise<WeekPlanMeal[]> {
     return await this.sql<WeekPlanMeal[]>`
       SELECT * FROM ${this.sql(this.tableName)}
       WHERE week_plan_id = ${weekPlanId} AND day_of_week = ${dayOfWeek}
-      ORDER BY meal_type ASC
+      ORDER BY position ASC
     `;
   }
 
-  async findByMealType(
-    weekPlanId: number,
-    mealType: WeekPlanMeal['mealType']
-  ): Promise<WeekPlanMeal[]> {
+  /**
+   * Find selected meals for a week plan
+   */
+  async findSelectedMeals(weekPlanId: string): Promise<WeekPlanMeal[]> {
     return await this.sql<WeekPlanMeal[]>`
       SELECT * FROM ${this.sql(this.tableName)}
-      WHERE week_plan_id = ${weekPlanId} AND meal_type = ${mealType}
-      ORDER BY day_of_week ASC
+      WHERE week_plan_id = ${weekPlanId} AND selected = true
+      ORDER BY day_of_week ASC, position ASC
     `;
   }
 }
