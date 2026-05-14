@@ -1,9 +1,16 @@
 import { db, DatabaseConfig } from '../src/db/connection.js';
 import { migrationManager } from '../src/db/migrations.js';
 import path from 'path';
+import { randomBytes } from 'crypto';
 
 // Skip these tests if DATABASE_AVAILABLE is not set
 const describeIfDatabase = process.env.DATABASE_AVAILABLE === 'true' ? describe : describe.skip;
+
+// Helper to generate a valid UUID with random suffix
+function generateTestUUID(prefix: string): string {
+  const randomHex = randomBytes(6).toString('hex'); // 12 hex characters
+  return `${prefix}-${randomHex.slice(0, 4)}-${randomHex.slice(4, 8)}-${randomHex.slice(8, 12)}`;
+}
 
 describeIfDatabase('Database Migrations', () => {
   const testConfig: DatabaseConfig = {
@@ -172,7 +179,7 @@ describeIfDatabase('Database Migrations', () => {
       const sql = db.getClient();
 
       // Try to insert duplicate user_profile for same user
-      const userId = `ffffffff-ffff-ffff-ffff-${Date.now().toString().padStart(12, '0')}`;
+      const userId = generateTestUUID('ffffffff-ffff-ffff-ffff');
       await sql`INSERT INTO users (id) VALUES (${userId})`;
       await sql`INSERT INTO user_profiles (user_id, height) VALUES (${userId}, 175)`;
 
@@ -183,7 +190,7 @@ describeIfDatabase('Database Migrations', () => {
 
     it('should enforce check constraints', async () => {
       const sql = db.getClient();
-      const userId = `eeeeeeee-eeee-eeee-eeee-${Date.now().toString().padStart(12, '0')}`;
+      const userId = generateTestUUID('eeeeeeee-eeee-eeee-eeee');
       await sql`INSERT INTO users (id) VALUES (${userId})`;
 
       // Try to insert invalid age
@@ -199,7 +206,7 @@ describeIfDatabase('Database Migrations', () => {
 
     it('should cascade deletes', async () => {
       const sql = db.getClient();
-      const userId = `dddddddd-dddd-dddd-dddd-${Date.now().toString().padStart(12, '0')}`;
+      const userId = generateTestUUID('dddddddd-dddd-dddd-dddd');
 
       // Insert user and related data
       await sql`INSERT INTO users (id) VALUES (${userId})`;
@@ -219,7 +226,7 @@ describeIfDatabase('Database Migrations', () => {
 
     it('should auto-update updated_at on changes', async () => {
       const sql = db.getClient();
-      const userId = `cccccccc-cccc-cccc-cccc-${Date.now().toString().padStart(12, '0')}`;
+      const userId = generateTestUUID('cccccccc-cccc-cccc-cccc');
 
       await sql`INSERT INTO users (id) VALUES (${userId})`;
       const before = await sql`SELECT updated_at FROM users WHERE id = ${userId}`;
