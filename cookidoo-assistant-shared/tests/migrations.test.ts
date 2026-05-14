@@ -2,7 +2,10 @@ import { db, DatabaseConfig } from '../src/db/connection.js';
 import { migrationManager } from '../src/db/migrations.js';
 import path from 'path';
 
-describe('Database Migrations', () => {
+// Skip these tests if DATABASE_AVAILABLE is not set
+const describeIfDatabase = process.env.DATABASE_AVAILABLE === 'true' ? describe : describe.skip;
+
+describeIfDatabase('Database Migrations', () => {
   const testConfig: DatabaseConfig = {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432', 10),
