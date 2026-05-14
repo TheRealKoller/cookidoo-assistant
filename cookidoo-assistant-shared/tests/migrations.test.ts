@@ -172,7 +172,7 @@ describeIfDatabase('Database Migrations', () => {
       const sql = db.getClient();
 
       // Try to insert duplicate user_profile for same user
-      const userId = 'test-unique-' + Date.now();
+      const userId = `ffffffff-ffff-ffff-ffff-${Date.now().toString().padStart(12, '0')}`;
       await sql`INSERT INTO users (id) VALUES (${userId})`;
       await sql`INSERT INTO user_profiles (user_id, height) VALUES (${userId}, 175)`;
 
@@ -183,7 +183,7 @@ describeIfDatabase('Database Migrations', () => {
 
     it('should enforce check constraints', async () => {
       const sql = db.getClient();
-      const userId = 'test-check-' + Date.now();
+      const userId = `eeeeeeee-eeee-eeee-eeee-${Date.now().toString().padStart(12, '0')}`;
       await sql`INSERT INTO users (id) VALUES (${userId})`;
 
       // Try to insert invalid age
@@ -199,7 +199,7 @@ describeIfDatabase('Database Migrations', () => {
 
     it('should cascade deletes', async () => {
       const sql = db.getClient();
-      const userId = 'test-cascade-' + Date.now();
+      const userId = `dddddddd-dddd-dddd-dddd-${Date.now().toString().padStart(12, '0')}`;
 
       // Insert user and related data
       await sql`INSERT INTO users (id) VALUES (${userId})`;
@@ -219,7 +219,7 @@ describeIfDatabase('Database Migrations', () => {
 
     it('should auto-update updated_at on changes', async () => {
       const sql = db.getClient();
-      const userId = 'test-timestamp-' + Date.now();
+      const userId = `cccccccc-cccc-cccc-cccc-${Date.now().toString().padStart(12, '0')}`;
 
       await sql`INSERT INTO users (id) VALUES (${userId})`;
       const before = await sql`SELECT updated_at FROM users WHERE id = ${userId}`;
@@ -241,7 +241,7 @@ describeIfDatabase('Database Migrations', () => {
       const sql = db.getClient();
       const users = await sql`
         SELECT * FROM users 
-        WHERE id LIKE 'a0000000-0000-0000-0000-%'
+        WHERE id::text LIKE 'a0000000-0000-0000-0000-%'
       `;
 
       expect(users.length).toBeGreaterThanOrEqual(3);
@@ -251,7 +251,7 @@ describeIfDatabase('Database Migrations', () => {
       const sql = db.getClient();
       const profiles = await sql`
         SELECT * FROM user_profiles 
-        WHERE id LIKE 'b0000000-0000-0000-0000-%'
+        WHERE id::text LIKE 'b0000000-0000-0000-0000-%'
       `;
 
       expect(profiles.length).toBeGreaterThanOrEqual(3);
@@ -261,12 +261,12 @@ describeIfDatabase('Database Migrations', () => {
       const sql = db.getClient();
       const weekPlans = await sql`
         SELECT * FROM week_plans 
-        WHERE id LIKE 'g0000000-0000-0000-0000-%'
+        WHERE id::text LIKE 'a1000000-0000-0000-0000-%'
       `;
 
       const meals = await sql`
         SELECT * FROM week_plan_meals 
-        WHERE id LIKE 'h0000000-0000-0000-0000-%'
+        WHERE id::text LIKE 'a2000000-0000-0000-0000-%'
       `;
 
       expect(weekPlans.length).toBeGreaterThanOrEqual(3);
