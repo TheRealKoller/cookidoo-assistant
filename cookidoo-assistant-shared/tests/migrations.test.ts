@@ -1,10 +1,6 @@
 import { db, DatabaseConfig } from '../src/db/connection.js';
 import { migrationManager } from '../src/db/migrations.js';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 describe('Database Migrations', () => {
   const testConfig: DatabaseConfig = {
@@ -27,7 +23,7 @@ describe('Database Migrations', () => {
   describe('Migration System', () => {
     it('should initialize migrations table', async () => {
       await migrationManager.init();
-      
+
       const sql = db.getClient();
       const result = await sql`
         SELECT EXISTS (
@@ -35,24 +31,24 @@ describe('Database Migrations', () => {
           WHERE table_name = 'schema_migrations'
         ) as exists
       `;
-      
+
       expect(result[0].exists).toBe(true);
     });
 
     it('should run migrations successfully', async () => {
-      const migrationsDir = path.join(__dirname, '..', 'migrations');
+      const migrationsDir = path.resolve(__dirname, '../migrations');
       await migrationManager.runMigrations(migrationsDir);
-      
+
       const executed = await migrationManager.getExecutedMigrations();
       expect(executed.length).toBeGreaterThan(0);
     });
 
     it('should not re-run already executed migrations', async () => {
-      const migrationsDir = path.join(__dirname, '..', 'migrations');
+      const migrationsDir = path.resolve(__dirname, '../migrations');
       const executedBefore = await migrationManager.getExecutedMigrations();
-      
+
       await migrationManager.runMigrations(migrationsDir);
-      
+
       const executedAfter = await migrationManager.getExecutedMigrations();
       expect(executedAfter.length).toBe(executedBefore.length);
     });
@@ -68,9 +64,9 @@ describe('Database Migrations', () => {
         AND table_type = 'BASE TABLE'
         ORDER BY table_name
       `;
-      
+
       const tableNames = tables.map((t) => t.table_name);
-      
+
       expect(tableNames).toContain('users');
       expect(tableNames).toContain('user_profiles');
       expect(tableNames).toContain('dietary_preferences');
@@ -88,7 +84,7 @@ describe('Database Migrations', () => {
           SELECT FROM pg_extension WHERE extname = 'uuid-ossp'
         ) as exists
       `;
-      
+
       expect(result[0].exists).toBe(true);
     });
 
@@ -107,11 +103,13 @@ describe('Database Migrations', () => {
           ON ccu.constraint_name = tc.constraint_name
         WHERE tc.constraint_type = 'FOREIGN KEY'
       `;
-      
+
       expect(constraints.length).toBeGreaterThan(0);
-      
+
       // Check specific foreign keys exist
-      const fkNames = constraints.map((c) => `${c.table_name}.${c.column_name}->${c.foreign_table_name}`);
+      const fkNames = constraints.map(
+        (c) => `${c.table_name}.${c.column_name}->${c.foreign_table_name}`
+      );
       expect(fkNames).toContain('user_profiles.user_id->users');
       expect(fkNames).toContain('dietary_preferences.user_id->users');
       expect(fkNames).toContain('allergies.user_id->users');
@@ -131,9 +129,9 @@ describe('Database Migrations', () => {
         WHERE schemaname = 'public'
         ORDER BY tablename, indexname
       `;
-      
+
       const indexNames = indexes.map((i) => i.indexname);
-      
+
       // Check critical indexes exist
       expect(indexNames).toContain('idx_user_profiles_user_id');
       expect(indexNames).toContain('idx_recipe_ratings_user_recipe');
@@ -151,9 +149,9 @@ describe('Database Migrations', () => {
         WHERE trigger_schema = 'public'
         AND trigger_name LIKE '%updated_at%'
       `;
-      
+
       expect(triggers.length).toBe(8); // One for each table
-      
+
       const tableNames = triggers.map((t) => t.event_object_table);
       expect(tableNames).toContain('users');
       expect(tableNames).toContain('user_profiles');
@@ -169,12 +167,12 @@ describe('Database Migrations', () => {
   describe('Data Integrity', () => {
     it('should enforce unique constraints', async () => {
       const sql = db.getClient();
-      
+
       // Try to insert duplicate user_profile for same user
       const userId = 'test-unique-' + Date.now();
       await sql`INSERT INTO users (id) VALUES (${userId})`;
       await sql`INSERT INTO user_profiles (user_id, height) VALUES (${userId}, 175)`;
-      
+
       await expect(
         sql`INSERT INTO user_profiles (user_id, height) VALUES (${userId}, 180)`
       ).rejects.toThrow();
@@ -184,12 +182,12 @@ describe('Database Migrations', () => {
       const sql = db.getClient();
       const userId = 'test-check-' + Date.now();
       await sql`INSERT INTO users (id) VALUES (${userId})`;
-      
+
       // Try to insert invalid age
       await expect(
         sql`INSERT INTO user_profiles (user_id, age) VALUES (${userId}, 200)`
       ).rejects.toThrow();
-      
+
       // Try to insert invalid gender
       await expect(
         sql`INSERT INTO user_profiles (user_id, gender) VALUES (${userId}, 'invalid')`
@@ -199,19 +197,19 @@ describe('Database Migrations', () => {
     it('should cascade deletes', async () => {
       const sql = db.getClient();
       const userId = 'test-cascade-' + Date.now();
-      
+
       // Insert user and related data
       await sql`INSERT INTO users (id) VALUES (${userId})`;
       await sql`INSERT INTO user_profiles (user_id, height) VALUES (${userId}, 175)`;
       await sql`INSERT INTO allergies (user_id, allergen, severity) VALUES (${userId}, 'test', 'mild')`;
-      
+
       // Delete user
       await sql`DELETE FROM users WHERE id = ${userId}`;
-      
+
       // Verify related data was deleted
       const profiles = await sql`SELECT * FROM user_profiles WHERE user_id = ${userId}`;
       const allergies = await sql`SELECT * FROM allergies WHERE user_id = ${userId}`;
-      
+
       expect(profiles.length).toBe(0);
       expect(allergies.length).toBe(0);
     });
@@ -219,16 +217,16 @@ describe('Database Migrations', () => {
     it('should auto-update updated_at on changes', async () => {
       const sql = db.getClient();
       const userId = 'test-timestamp-' + Date.now();
-      
+
       await sql`INSERT INTO users (id) VALUES (${userId})`;
       const before = await sql`SELECT updated_at FROM users WHERE id = ${userId}`;
-      
+
       // Wait a bit to ensure timestamp difference
       await new Promise((resolve) => setTimeout(resolve, 100));
-      
+
       await sql`UPDATE users SET created_at = created_at WHERE id = ${userId}`;
       const after = await sql`SELECT updated_at FROM users WHERE id = ${userId}`;
-      
+
       expect(new Date(after[0].updated_at).getTime()).toBeGreaterThan(
         new Date(before[0].updated_at).getTime()
       );
@@ -242,7 +240,7 @@ describe('Database Migrations', () => {
         SELECT * FROM users 
         WHERE id LIKE 'a0000000-0000-0000-0000-%'
       `;
-      
+
       expect(users.length).toBeGreaterThanOrEqual(3);
     });
 
@@ -252,7 +250,7 @@ describe('Database Migrations', () => {
         SELECT * FROM user_profiles 
         WHERE id LIKE 'b0000000-0000-0000-0000-%'
       `;
-      
+
       expect(profiles.length).toBeGreaterThanOrEqual(3);
     });
 
@@ -262,12 +260,12 @@ describe('Database Migrations', () => {
         SELECT * FROM week_plans 
         WHERE id LIKE 'g0000000-0000-0000-0000-%'
       `;
-      
+
       const meals = await sql`
         SELECT * FROM week_plan_meals 
         WHERE id LIKE 'h0000000-0000-0000-0000-%'
       `;
-      
+
       expect(weekPlans.length).toBeGreaterThanOrEqual(3);
       expect(meals.length).toBeGreaterThanOrEqual(9);
     });
