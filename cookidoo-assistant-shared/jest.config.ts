@@ -19,6 +19,9 @@ export default {
     '!src/**/*.d.ts',
     '!src/**/__tests__/**',
     '!src/**/index.ts',
+    '!src/db/**', // DB requires PostgreSQL, tested separately with DATABASE_AVAILABLE=true
+    '!src/repositories/**', // Repositories require PostgreSQL, tested separately
+    '!src/models/**', // Models are type definitions only
   ],
   coverageThreshold: {
     global: {
