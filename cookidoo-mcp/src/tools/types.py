@@ -55,3 +55,25 @@ class SearchRecipesResponse(BaseModel):
     total: int
     offset: int
     limit: int
+
+
+class NutrientInfo(BaseModel):
+    """Single nutrient information."""
+    value: float
+    unit: str
+    type: str  # e.g., "energy", "protein", "carbohydrate", etc.
+
+
+class RecipeNutrition(BaseModel):
+    """Nutritional information for a recipe."""
+    recipe_id: str
+    serving_size: int
+    calories: Optional[float] = None  # kcal per serving
+    protein: Optional[float] = None  # grams per serving
+    carbohydrates: Optional[float] = None  # grams per serving
+    fat: Optional[float] = None  # grams per serving
+    fiber: Optional[float] = None  # grams per serving
+    sugar: Optional[float] = None  # grams per serving
+    sodium: Optional[float] = None  # mg per serving
+    saturated_fat: Optional[float] = None  # grams per serving
+    nutrients: list[NutrientInfo] = Field(default_factory=list)  # All available nutrients

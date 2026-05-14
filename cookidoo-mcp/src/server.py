@@ -8,6 +8,7 @@ from src.middleware import auth_middleware
 from src.cookidoo_client import cookidoo_connection
 from src.tools.recipe_details import get_recipe_details
 from src.tools.search_recipes import search_recipes
+from src.tools.recipe_nutrition import get_recipe_nutrition
 from src.tools.types import SearchRecipesRequest
 
 @asynccontextmanager
@@ -81,6 +82,19 @@ async def handle_search_recipes(request: SearchRecipesRequest):
         return JSONResponse({"error": str(e)}, status_code=400)
     except Exception as e:
         logger.error(f"Error in search_recipes: {e}", exc_info=True)
+        return JSONResponse({"error": "Internal error"}, status_code=500)
+
+
+@app.post("/tools/get_recipe_nutrition")
+async def handle_get_recipe_nutrition(recipe_id: str):
+    """Get nutritional information for a recipe"""
+    try:
+        nutrition = await get_recipe_nutrition(recipe_id)
+        return JSONResponse(nutrition.model_dump())
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=404)
+    except Exception as e:
+        logger.error(f"Error in get_recipe_nutrition: {e}", exc_info=True)
         return JSONResponse({"error": "Internal error"}, status_code=500)
 
 if __name__ == "__main__":
