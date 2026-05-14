@@ -27,3 +27,31 @@ class RecipeDetails(BaseModel):
     instructions: list[RecipeStep] = Field(default_factory=list)
     tags: list[str] = Field(default_factory=list)
     equipment: list[str] = Field(default_factory=list)
+
+
+class SearchRecipeResult(BaseModel):
+    """Simplified recipe result for search operations."""
+    id: str
+    title: str
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+    cooking_time: Optional[int] = None  # minutes
+    difficulty: Optional[str] = None
+
+
+class SearchRecipesRequest(BaseModel):
+    """Request parameters for recipe search."""
+    query: Optional[str] = None
+    ingredients: list[str] = Field(default_factory=list)
+    diet: Optional[str] = None  # omnivor, vegetarian, vegan, pescetarian
+    exclude_ingredients: list[str] = Field(default_factory=list)
+    max_results: int = Field(default=20, ge=1, le=100)
+    offset: int = Field(default=0, ge=0)
+
+
+class SearchRecipesResponse(BaseModel):
+    """Response containing search results and metadata."""
+    recipes: list[SearchRecipeResult] = Field(default_factory=list)
+    total: int
+    offset: int
+    limit: int

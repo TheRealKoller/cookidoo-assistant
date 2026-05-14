@@ -7,6 +7,8 @@ from src.logging_config import logger
 from src.middleware import auth_middleware
 from src.cookidoo_client import cookidoo_connection
 from src.tools.recipe_details import get_recipe_details
+from src.tools.search_recipes import search_recipes
+from src.tools.types import SearchRecipesRequest
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -59,6 +61,26 @@ async def handle_get_recipe_details(recipe_id: str):
         return JSONResponse({"error": str(e)}, status_code=404)
     except Exception as e:
         logger.error(f"Error in get_recipe_details: {e}", exc_info=True)
+        return JSONResponse({"error": "Internal error"}, status_code=500)
+
+
+@app.post("/tools/search_recipes")
+async def handle_search_recipes(request: SearchRecipesRequest):
+    """Search for recipes with various filters"""
+    try:
+        results = await search_recipes(
+            query=request.query,
+            ingredients=request.ingredients,
+            diet=request.diet,
+            exclude_ingredients=request.exclude_ingredients,
+            max_results=request.max_results,
+            offset=request.offset,
+        )
+        return JSONResponse(results.model_dump())
+    except ValueError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    except Exception as e:
+        logger.error(f"Error in search_recipes: {e}", exc_info=True)
         return JSONResponse({"error": "Internal error"}, status_code=500)
 
 if __name__ == "__main__":
